@@ -12,9 +12,9 @@ const mapStateToProps = state => {
   } else {
     publications = []
   }
-  debugger;
   return {
-    publications: publications
+    publications: publications,
+    isLoading: state.general.isLoading
   }
 }
 

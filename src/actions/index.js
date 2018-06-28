@@ -16,7 +16,7 @@ export const receiveSearch = (searchString, json) => ({
 export const startSearch = (searchString) => {
   return (dispatch) => {
     dispatch(requestSearch(searchString))
-    return fetch(`https://www.reddit.com/r/${searchString}.json`)
+    fetch(`https://www.reddit.com/r/${searchString}.json`)
       .then(response => response.json())
       .then(json => dispatch(receiveSearch(searchString, json)))
   }

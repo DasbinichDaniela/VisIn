@@ -6,12 +6,15 @@ const general = (state = { }, action) => {
     case REQUEST_SEARCH:
       return {
         ...state,
-        searchString: action.searchString
+        searchString: action.searchString,
+        isLoading: true
       }
     case RECEIVE_SEARCH:
       return {
         ...state,
-        publications: action.publications
+        publications: action.publications,
+        isLoading: false,
+        hasError: false
       }
     default:
       return state

@@ -14,7 +14,9 @@ const general = (state=general_default_state, action) => {
       return {
         ...state,
         searchString: action.searchString,
-        isLoading: true
+        isLoading: true,
+        errorConnection: false,
+        noInformationFound: false
       }
     case RECEIVE_SEARCH:
       return {
@@ -31,9 +33,8 @@ const general = (state=general_default_state, action) => {
     case NO_INFORMATION_FOUND:
       return {
         ...state,
-          errorInformation: true,
-          isLoading: false
-
+        noInformationFound: true,
+        isLoading: false
       }
     default:
       return state

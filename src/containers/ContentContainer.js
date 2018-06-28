@@ -14,7 +14,9 @@ const mapStateToProps = state => {
   }
   return {
     publications: publications,
-    isLoading: state.general.isLoading
+    isLoading: state.general.isLoading,
+    errorConnection: state.general.errorConnection,
+    noInformationFound: state.general.noInformationFound,
   }
 }
 

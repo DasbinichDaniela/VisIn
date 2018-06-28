@@ -1,7 +1,14 @@
 import { combineReducers } from 'redux'
-import { REQUEST_SEARCH, RECEIVE_SEARCH } from '../actions'
+import { REQUEST_SEARCH, RECEIVE_SEARCH, ERROR_SEARCH, NO_INFORMATION_FOUND } from '../actions'
 
-const general = (state = { }, action) => {
+var general_default_state = {
+  searchString: "",
+  publications: [],
+  isLoading: false,
+  errorConnection: false
+}
+
+const general = (state=general_default_state, action) => {
   switch (action.type) {
     case REQUEST_SEARCH:
       return {
@@ -13,8 +20,20 @@ const general = (state = { }, action) => {
       return {
         ...state,
         publications: action.publications,
-        isLoading: false,
-        hasError: false
+        isLoading: false
+      }
+    case ERROR_SEARCH:
+      return {
+        ...state,
+        errorConnection: true,
+        isLoading: false
+      }
+    case NO_INFORMATION_FOUND:
+      return {
+        ...state,
+          errorInformation: true,
+          isLoading: false
+
       }
     default:
       return state

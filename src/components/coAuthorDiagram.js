@@ -34,8 +34,10 @@ class CoAuthorDiagram extends Component {
    //        .attr("r", function(d) { return Math.sqrt(d); });
    // }
    createCoAuthorDiagram() {
-     var coAuthorArray = [{"name":"Dirk Burkhardt","count":24},{"name":"Christian Stab","count":11},{"name":"Martin Steiger","count":2}]
-     var searchedAuthor = "Kawa Nazemi"
+     var coAuthorArray = this.props.coAuthorArray
+     // var coAuthorArray = [{"name":"Dirk Burkhardt","count":24},{"name":"Christian Stab","count":11},{"name":"Martin Steiger","count":2}]
+     // var searchedAuthor = "Kawa Nazemi"
+     var searchedAuthor = this.props.searchedAuthor
 
      coAuthorArray.sort(function(a, b){
        return b.count - a.count

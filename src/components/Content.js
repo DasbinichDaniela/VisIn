@@ -1,4 +1,5 @@
 import React from 'react'
+import CoAuthorDiagramContainer from '../containers/CoAuthorDiagramContainer'
 
 const Content = ({publications, isLoading, errorConnection, noInformationFound}) => (
   <div>
@@ -10,6 +11,9 @@ const Content = ({publications, isLoading, errorConnection, noInformationFound})
     }
     {noInformationFound &&
       <h1>There is no author with that name! Please try again.</h1>
+    }
+    {publications.length>0 &&
+      <CoAuthorDiagramContainer />
     }
     <ul>
       {publications.map((publication, i) =>

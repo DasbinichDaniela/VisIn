@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { REQUEST_SEARCH, RECEIVE_SEARCH, ERROR_SEARCH, NO_INFORMATION_FOUND } from '../actions'
+import { REQUEST_SEARCH, RECEIVE_SEARCH, ERROR_SEARCH, NO_INFORMATION_FOUND, REQUEST_TOPICS, RECEIVE_TOPICS, ERROR_TOPICS } from '../actions'
 
 var general_default_state = {
   searchString: "",
@@ -41,8 +41,41 @@ const general = (state=general_default_state, action) => {
   }
 }
 
+var topics_default_state = {
+  topics: [],
+  isLoading: false,
+  errorConnection: false
+}
+
+const topicsDiagram = (state=topics_default_state, action) => {
+
+  switch (action.type) {
+    case REQUEST_TOPICS:
+      return {
+        ...state,
+        isLoading: true,
+        errorConnection: false,
+      }
+    case RECEIVE_TOPICS:
+      return {
+        ...state,
+        topics: action.topics,
+        isLoading: false
+      }
+    case ERROR_TOPICS:
+      return {
+        ...state,
+        errorConnection: true,
+        isLoading: false
+      }
+    default:
+      return state
+  }
+}
+
 const rootReducer = combineReducers({
   general,
+  topicsDiagram
   // selectedSubreddit
 })
 

@@ -2,7 +2,9 @@ export const REQUEST_SEARCH = 'REQUEST_SEARCH'
 export const RECEIVE_SEARCH = 'RECEIVE_SEARCH'
 export const ERROR_SEARCH = 'ERROR_SEARCH'
 export const NO_INFORMATION_FOUND = 'NO_INFORMATION_FOUND'
-
+export const REQUEST_TOPICS = 'REQUEST_TOPICS'
+export const RECEIVE_TOPICS = 'RECEIVE_TOPICS'
+export const ERROR_TOPICS = 'ERROR_TOPICS'
 
 export const requestSearch = searchString => ({
   type: REQUEST_SEARCH,
@@ -54,10 +56,38 @@ export const startSearch = (searchString) => {
           dispatch(noInformationFound())
         }else {
           dispatch(receiveSearch(searchString, json))
+          dispatch(startFetchTopics())
         }
         })
       .catch(error => {
         dispatch(errorSearch(searchString))
       })
   }
+}
+
+export const requestTopics = () => ({
+  type: REQUEST_TOPICS,
+})
+
+export const receiveTopics = (json) => ({
+  type: RECEIVE_TOPICS,
+  topics: json
+})
+
+export const errorTopics = () => ({
+  type: ERROR_TOPICS,
+})
+
+export const startFetchTopics = () => {
+  return (dispatch) => {
+    dispatch(requestTopics())
+    fetch(`http://api.vissights.net/v2/dblp/topics`)
+      .then((response) => response.json())
+      .then((json) => {
+          dispatch(receiveTopics(json))
+        })
+      .catch(error => {
+        dispatch(errorTopics())
+      })
+    }
 }

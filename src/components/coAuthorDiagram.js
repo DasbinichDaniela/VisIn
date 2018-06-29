@@ -1,22 +1,43 @@
-import React from 'react'
+import React, { Component } from 'react'
+// import './App.css'
+// import { scaleLinear } from 'd3-scale'
+// import { max } from 'd3-array'
+// import { select } from 'd3-selection'
 
-const Content = ({publications, isLoading, errorConnection, noInformationFound}) => (
-  <div>
-    {isLoading &&
-      <h1>Please stay calm!</h1>
-    }
-    {errorConnection &&
-      <h1>Please check your connection!</h1>
-    }
-    {noInformationFound &&
-      <h1>There is no author with that name! Please try again.</h1>
-    }
-    <ul>
-      {publications.map((publication, i) =>
-        <li key={i}>{publication.title}</li>
-      )}
-    </ul>
-  </div>
-)
+import * as d3 from "d3"
 
-export default Content
+class CoAuthorDiagram extends Component {
+   constructor(props){
+      super(props)
+      this.createCoAuthorDiagram = this.createCoAuthorDiagram.bind(this)
+   }
+   componentDidMount() {
+      this.createCoAuthorDiagram()
+   }
+   componentDidUpdate() {
+      this.createCoAuthorDiagram()
+   }
+   createCoAuthorDiagram() {
+      const node = this.svg
+      var svg = d3.select(node);
+      // var svg = d3.select("coAuthorSVG");
+      svg.selectAll("circle")
+          .data([32, 57, 112, 293]) // this.props.publications?
+        .enter().append("circle")
+          .attr("cy", 60)
+          .attr("cx", function(d, i) { return i * 100 + 30; })
+          .attr("r", function(d) { return Math.sqrt(d); });
+   }
+render() {
+      return (
+        <div>
+          <svg ref={node => this.svg = node}
+                    width={500} height={500}>
+          </svg>
+          <div ref={node => this.chart = node}></div>
+          <div ref={node => this.xAxis = node}></div>
+        </div>
+      )
+   }
+}
+export default CoAuthorDiagram

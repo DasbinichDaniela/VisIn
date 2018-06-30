@@ -252,8 +252,6 @@ render() {
           <svg ref={node => this.svg = node}
                     width={500} height={500}>
           </svg>
-          <div ref={node => this.chart = node}></div>
-          <div ref={node => this.xAxis = node}></div>
         </div>
       )
    }

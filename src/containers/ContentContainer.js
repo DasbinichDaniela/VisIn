@@ -17,6 +17,7 @@ const mapStateToProps = state => {
     isLoading: state.general.isLoading,
     errorConnection: state.general.errorConnection,
     noInformationFound: state.general.noInformationFound,
+    topics: state.topicsDiagram.topics,
   }
 }
 

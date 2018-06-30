@@ -1,0 +1,7 @@
+#topicChart {
+  width: 1000px;
+  height: 470px;
+  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

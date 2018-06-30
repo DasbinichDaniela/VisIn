@@ -17,7 +17,7 @@ class CoAuthorDiagram extends Component {
       this.createCoAuthorDiagram()
    }
    componentDidUpdate() {
-      this.createCoAuthorDiagram()
+      // this.createCoAuthorDiagram()
    }
    // createCoAuthorDiagram() {
    //   var coAuthorArray = [{"name":"Dirk Burkhardt","count":24},{"name":"Christian Stab","count":11},{"name":"Martin Steiger","count":2}]

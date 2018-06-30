@@ -16,7 +16,8 @@ const general = (state=general_default_state, action) => {
         searchString: action.searchString,
         isLoading: true,
         errorConnection: false,
-        noInformationFound: false
+        noInformationFound: false,
+        publications: []
       }
     case RECEIVE_SEARCH:
       return {
@@ -50,6 +51,11 @@ var topics_default_state = {
 const topicsDiagram = (state=topics_default_state, action) => {
 
   switch (action.type) {
+    case REQUEST_SEARCH:
+      return {
+        ...state,
+        topics: []
+      }
     case REQUEST_TOPICS:
       return {
         ...state,

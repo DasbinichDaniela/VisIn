@@ -26,7 +26,7 @@ const mapStateToProps = state => {
 
   data.forEach(function (publication) {
     publication.author.forEach(function(author){
-      if(author === searchedAuthor){
+      if(author.toLowerCase() === searchedAuthor.toLowerCase()){
         return true;
       }
       var authorExistsInCoAutorArray = false;

@@ -45,7 +45,7 @@ const mapStateToProps = state => {
   var topicData = state.topicsDiagram.topics;
   var annualTopics = [];
   var TOPIC_MIN_RELEVANCE = 0.2
-  var searchedAuthor = "Jens Wissmann"
+  // var searchedAuthor = "Jens Wissmann"
   data.forEach(function (publication) {
   // include try and catch as some data do not have year infromtion
     try {

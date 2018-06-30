@@ -49,7 +49,9 @@ export const errorSearch = searchString => ({
 export const startSearch = (searchString) => {
   return (dispatch) => {
     dispatch(requestSearch(searchString))
-    fetch(`http://api.vissights.net/v2/dblp/author/search?authorname=Kawa%20Nazemi`)
+    var uri = `http://api.vissights.net/v2/dblp/author/search?authorname=${searchString}`
+    var formatted_uri = encodeURI(uri)
+    fetch(formatted_uri)
       .then((response) => response.json())
       .then((json) => {
         if(json.length === 0){

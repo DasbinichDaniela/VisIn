@@ -20,8 +20,8 @@ const mapStateToProps = state => {
   //   noInformationFound: state.general.noInformationFound,
   // }
   var coAuthorArray = [];
-  // var searchedAuthor = state.general.searchString;
-  var searchedAuthor = "Kawa Nazemi";
+  var searchedAuthor = state.general.searchString;
+  // var searchedAuthor = "Kawa Nazemi";
   var data = state.general.publications
 
   data.forEach(function (publication) {

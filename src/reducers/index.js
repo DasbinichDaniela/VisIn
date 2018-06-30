@@ -42,7 +42,6 @@ const general = (state=general_default_state, action) => {
 }
 
 var topics_default_state = {
-  searchString: "",
   topics: [],
   isLoading: false,
   errorConnection: false
@@ -58,7 +57,6 @@ const topicsDiagram = (state=topics_default_state, action) => {
         errorConnection: false,
       }
     case RECEIVE_TOPICS:
-    debugger;
       return {
         ...state,
         topics: action.topics,

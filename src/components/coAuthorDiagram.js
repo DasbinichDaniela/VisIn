@@ -48,7 +48,7 @@ class CoAuthorDiagram extends Component {
 
       // Set the dimensions and margins of the diagram
       var margin = {top: 20, right: 90, bottom: 30, left: 90},
-          width = 960 - margin.left - margin.right,
+          width = 400,
           height = coAuthorArray.length*25;
           // height = coAuthorArray.length*25 - margin.top - margin.bottom;
       // append the svg object to the body of the page
@@ -58,7 +58,7 @@ class CoAuthorDiagram extends Component {
 
       const node = this.svg
       var svg = d3.select(node)
-          .attr("width", width + margin.right + margin.left)
+          .attr("width", width)
           .attr("height", height + margin.top + margin.bottom)
         .append("g")
           .attr("transform", "translate("
@@ -249,8 +249,7 @@ class CoAuthorDiagram extends Component {
 render() {
       return (
         <div>
-          <svg ref={node => this.svg = node}
-                    width={500} height={500}>
+          <svg ref={node => this.svg = node}>
           </svg>
         </div>
       )

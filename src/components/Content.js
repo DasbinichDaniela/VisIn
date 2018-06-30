@@ -1,6 +1,7 @@
 import React from 'react'
 import CoAuthorDiagramContainer from '../containers/CoAuthorDiagramContainer'
 import TopicDiagramContainer from '../containers/TopicDiagramContainer'
+import './Content.css'
 
 const Content = ({publications, isLoading, errorConnection, noInformationFound, topics}) => (
   <div>
@@ -13,17 +14,14 @@ const Content = ({publications, isLoading, errorConnection, noInformationFound, 
     {noInformationFound &&
       <h1>There is no author with that name! Please try again.</h1>
     }
-    {publications.length>0 &&
-      <CoAuthorDiagramContainer />
-    }
-    {topics.length>0 &&
-      <TopicDiagramContainer />
-    }
-    <ul>
-      {publications.map((publication, i) =>
-        <li key={i}>{publication.title}</li>
-      )}
-    </ul>
+    <div className='rowComponents'>
+      {publications.length>0 &&
+        <CoAuthorDiagramContainer />
+      }
+      {topics.length>0 &&
+        <TopicDiagramContainer />
+      }
+    </div>
   </div>
 )
 

@@ -13,6 +13,7 @@ const mapStateToProps = state => {
     publications = []
   }
   return {
+    startScreen: state.general.startScreen,
     publications: publications,
     isLoading: state.general.isLoading,
     errorConnection: state.general.errorConnection,

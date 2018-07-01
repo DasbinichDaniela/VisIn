@@ -5,7 +5,8 @@ var general_default_state = {
   searchString: "",
   publications: [],
   isLoading: false,
-  errorConnection: false
+  errorConnection: false,
+  startScreen:true
 }
 
 const general = (state=general_default_state, action) => {
@@ -17,7 +18,8 @@ const general = (state=general_default_state, action) => {
         isLoading: true,
         errorConnection: false,
         noInformationFound: false,
-        publications: []
+        publications: [],
+        startScreen: false,
       }
     case RECEIVE_SEARCH:
       return {

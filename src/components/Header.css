@@ -3,7 +3,8 @@ form{
   /* height: 60px; */
   justify-content: center;
   display: flex;
-  padding: 25px;
+  padding-bottom: 25px;
+  padding-top: 25px;
 }
 
 .header{
@@ -31,4 +32,17 @@ input::placeholder {
 
 textarea:focus, input:focus{
   outline: none;
+}
+#searchButton{
+  border:none;
+  background-color: transparent;
+  outline: none;
+}
+#VisIn_Logo{
+  height: 85px;
+  position: absolute;
+}
+#searchImage{
+  width: 40px;
+    /* color: grey; */
 }

@@ -1,10 +1,61 @@
 body{
   margin: 0px;
+  overflow: hidden;
 }
 .rowComponents{
   display:flex;
   justify-content: space-around;
   padding: 20px;
   padding-top: 50px;
-  margin: 20px;
+  /* margin: 20px; */
+}
+
+#logo{
+  display: flex;
+  justify-content: center;
+  margin-top: 200px;
+}
+
+.rect{
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  width: -webkit-fill-available;
+}
+
+#rectEins{
+  background-color: grey;
+  width: 80px;
+  height: 40px;
+  flex-grow: 1;
+}
+#rectZwei{
+  background-color: #70A896;
+  width: 80px;
+  height: 40px;
+  flex-grow: 1;
+}
+#rectDrei{
+  background-color: #E9E9E9;
+  width: 80px;
+  height: 40px;
+  flex-grow: 1;
+}
+
+#loadingScreen{
+  font-family: "Lato";
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 200px;
+}
+#errorScreen{
+  font-family: "Lato";
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 200px;
 }

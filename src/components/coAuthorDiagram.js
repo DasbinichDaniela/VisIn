@@ -48,7 +48,7 @@ class CoAuthorDiagram extends Component {
 
       // Set the dimensions and margins of the diagram
       var margin = {top: 20, right: 90, bottom: 30, left: 90},
-          width = 400,
+          width = 500,
           height = coAuthorArray.length*25;
           // height = coAuthorArray.length*25 - margin.top - margin.bottom;
       // append the svg object to the body of the page
@@ -125,9 +125,9 @@ class CoAuthorDiagram extends Component {
         nodeEnter.append('circle')
             .attr('class', 'node')
             .attr('r', 20)
-            .style("fill", function(d) {
-                return d._coAuthors ? "lightsteelblue" : "steelblue";
-            });
+            // .style("fill", function(d) {
+            //     return d._coAuthors ? "lightsteelblue" : "steelblue";
+            // });
         // Add labels for the nodes -> -13 distance to circle
         // searched Author shall be left of Bubble
 
@@ -195,9 +195,9 @@ class CoAuthorDiagram extends Component {
           //           .duration(500)
           //           .style("opacity", 0);
           //   })
-          .style("fill", function(d) {
-              return d._coAuthors ? "lightsteelblue" : "steelblue";
-          })
+          // .style("fill", function(d) {
+          //     return d._coAuthors ? "lightsteelblue" : "steelblue";
+          // })
           .attr('cursor', 'pointer');
 
 

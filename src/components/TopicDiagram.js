@@ -171,7 +171,7 @@ class TopicDiagram extends Component {
 
 
         // getColor a different color for each topic (max 20 colours; afterwards they will repeat)
-        var colores = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+        var colores = ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"];
         var indexColor = 0;
         for(index in topicSequence){
           topicSequence[index].color = colores[indexColor];
@@ -330,7 +330,7 @@ class TopicDiagram extends Component {
   function createScale(settings, xAxis){
     var svg = d3.select(xAxis).append("svg")
                         .attr("width", 1000)
-                        .attr("height", 550);
+                        .attr("height", 100);
 
     var minMaxDate = calculateMinMax(settings.annualTopics);
 

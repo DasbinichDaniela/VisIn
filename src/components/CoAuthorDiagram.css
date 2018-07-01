@@ -1,6 +1,6 @@
 .node circle {
-  fill: steelblue;
-  stroke: steelblue;
+  fill: #70A896;
+  stroke: #70A896;
   stroke-width: 3px;
 }
 .node text {
@@ -14,9 +14,11 @@
 
 
 .coAuthorDiagram{
+  max-width: 500px;
   border-style: solid;
   border-width: 5px;
-  border-color: grey;
+  border-color: #E9E9E9;
+  border-radius: 12px;
   padding: 5px;
   padding-left: 10px;
   padding-right: 30px;

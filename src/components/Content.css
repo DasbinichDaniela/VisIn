@@ -3,6 +3,8 @@ body{
 }
 .rowComponents{
   display:flex;
-  justify-content: center;
-  padding: 50px;
+  justify-content: space-around;
+  padding: 20px;
+  padding-top: 50px;
+  margin: 20px;
 }

@@ -402,7 +402,7 @@ class TopicDiagram extends Component {
 
   render() {
     return (
-      <div>
+      <div className="topicDiagram">
         <div id="topicChart" ref={node => this.chart = node}></div>
         <div ref={node => this.xAxis = node}></div>
       </div>

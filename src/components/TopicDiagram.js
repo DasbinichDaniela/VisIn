@@ -282,10 +282,28 @@ class TopicDiagram extends Component {
       .attr("height", height)
       .append("g")
 
+    var div = d3.select(chart).append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+
     var circles = svgContainer.selectAll("circle")
                               .data(finalArray)
                               .enter()
                               .append("circle")
+                              .on("mouseover", function(d) {
+                                div.transition()
+                                  .duration(200)
+                                  .style("opacity", .8);
+                                div.html(d.count)
+                                  .style("left", (d3.event.pageX) + "px")
+                                  .style("top", (d3.event.pageY) + "px");
+                              })
+                              .on("mouseout", function(d) {
+                                  div.transition()
+                                      .duration(500)
+                                      .style("opacity", 0);
+                              })
 
 
     var circleAttributes = circles

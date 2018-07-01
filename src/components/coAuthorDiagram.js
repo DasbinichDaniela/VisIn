@@ -173,15 +173,34 @@ class CoAuthorDiagram extends Component {
         var max = d3.max(countArray);
         var radiusScale = d3.scaleLinear().range([1, multiplier]).domain([0, max])
 
+        var div = d3.select("circle.node").append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
+
         nodeUpdate.select('circle.node')
           .attr('r', function(d){ return radiusScale(d.data.count)
             // debugger;
             return d.data.count
           })
+          // .on("mouseover", function(d) {
+          //   div.transition()
+          //     .duration(200)
+          //     .style("opacity", .8);
+          //   div.html(d.count)
+          //     .style("left", (d3.event.pageX) + "px")
+          //     .style("top", (d3.event.pageY) + "px");
+          //   })
+          //   .on("mouseout", function(d) {
+          //       div.transition()
+          //           .duration(500)
+          //           .style("opacity", 0);
+          //   })
           .style("fill", function(d) {
               return d._coAuthors ? "lightsteelblue" : "steelblue";
           })
           .attr('cursor', 'pointer');
+
+
         // Remove any exiting nodes - when clicking on the circle to close outgoing lines
         var nodeExit = node.exit().transition()
             .duration(duration)
@@ -248,7 +267,7 @@ class CoAuthorDiagram extends Component {
    }
 render() {
       return (
-        <div>
+        <div className="coAuthorDiagram">
           <svg ref={node => this.svg = node}>
           </svg>
         </div>

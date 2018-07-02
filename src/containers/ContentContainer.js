@@ -4,8 +4,6 @@ import Content from '../components/Content'
 
 
 const mapStateToProps = state => {
-  // ich breche den globalen State auf die jeweiligen props runter
-  // meine props sind das was nachher returned wird
   let publications;
   if(state.general && state.general.publications){
     publications = state.general.publications

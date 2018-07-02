@@ -19,20 +19,7 @@ class TopicDiagram extends Component {
   componentDidUpdate() {
     this.createTopicDiagram()
   }
-  // createTopicDiagram() {
-  //   var coAuthorArray = [{"name":"Dirk Burkhardt","count":24},{"name":"Christian Stab","count":11},{"name":"Martin Steiger","count":2}]
-  //   debugger;
-  //
-  //    const node = this.svg
-  //    var svg = d3.select(node);
-  //    // var svg = d3.select("coAuthorSVG");
-  //    svg.selectAll("circle")
-  //        .data([32, 57, 112, 293]) // this.props.publications?
-  //      .enter().append("circle")
-  //        .attr("cy", 60)
-  //        .attr("cx", function(d, i) { return i * 100 + 30; })
-  //        .attr("r", function(d) { return Math.sqrt(d); });
-  // }
+
   createTopicDiagram() {
 
     var settings = {
@@ -47,21 +34,18 @@ class TopicDiagram extends Component {
       topicNames: [],
       annualTopics: this.props.annualTopics,
     }
-    // debugger;
+
     createScale(settings, this.xAxis)
     settings.finalArray = getFinalArray(settings)
-
     console.log(settings.finalArray)
     settings.topicNameList = getTopicNames(this.props.topicData, settings)
     settings.height = getHeight(settings.finalArray)
     createCircles(settings.finalArray, settings.height, settings.topicNameList, this.chart)
 
     function getFinalArray(settings){
-
       // create Intervals instead of Years to get position in time axis
       var intervalYearsArray = [];
       var timeDif = settings.maxDate - settings.minDate;
-
       var index = 0;
 
       for(index; index < timeDif/settings.intervalCount; index++){
@@ -134,9 +118,6 @@ class TopicDiagram extends Component {
         var topic = {};
         topic.interval = intervalYear;
         topic.topic = annualTopics[index].topic
-        // topic.year = annualTopics[index].year
-
-        // topic.year = year;
         annualTopicList.push(topic)
       }
       return annualTopicList;
@@ -253,11 +234,7 @@ class TopicDiagram extends Component {
         }else {
           topicString = topicData[indexNumberTopic].word[0][0]
         }
-        // if(topicData[indexNumberTopic].phrase[0][1]>topicData[indexNumberTopic].word[0][1]){
-        //   topicString = topicData[indexNumberTopic].phrase[0][0]
-        // }else {
-        //   topicString = topicData[indexNumberTopic].word[0][0]
-        // }
+
         var topic = {};
         topic.id = indexNumberTopic
         topic.name = topicString
@@ -322,9 +299,6 @@ class TopicDiagram extends Component {
                       .attr("x", 800)
                       .attr("y", function (d){return d.y;})
                       .text(function(d){return d.name})
-                      .attr("font-family", "sans-serif")
-                      .attr("font-size", "15px")
-                      .attr("fill", "black")
   }
 
   function createScale(settings, xAxis){
@@ -339,19 +313,13 @@ class TopicDiagram extends Component {
 
     getAxisSpecs(settings)
 
-    // minDate = setNewMinDate(minDate, maxDate, numberOfTicks)
-
     var axisScale = d3.scaleTime()
-    // .domain([new Date("January 1, 1940 00:00:00"), new Date("January 4, 1980 00:00:00")])
           .domain([new Date(settings.minDate, 0, 1), new Date(settings.maxDate, 0, 1)])
           .range([100, 800]);
 
     var xAxis = d3.axisBottom()
       .scale(axisScale)
       .ticks(settings.numberOfTicks)
-      // .tickValues(d3.range(100, 800, numberOfTicks))
-      // .tickValues([new Date(minDate, 0, 1),
-      //              new Date(maxDate, 0, 1)])
       .tickSize(10)
       .tickFormat(d3.timeFormat("%Y"));
 
@@ -386,8 +354,6 @@ class TopicDiagram extends Component {
       // new min and max date for better/more intuitiv count on axis
     settings.minDate = Math.floor(settings.minDate/aggregationNumber)*aggregationNumber
     settings.maxDate = Math.ceil(settings.maxDate/aggregationNumber)*aggregationNumber
-    // var newAxisSpecs = {"minDate": minDate, "maxDate": maxDate, "numberOfTicks": numberOfTicks, "intervalCount": intervalCount}
-    // return newAxisSpecs
   }
 
   function calculateMinMax(annualTopics){

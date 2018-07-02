@@ -15,7 +15,6 @@ const Header = ({ dispatch }) => {
           return
         }
         dispatch(startSearch(input.value))
-        // input.value = ''
       }}>
         <input ref={node => input = node} placeholder="Search..."/>
         <button id="searchButton" type="submit">

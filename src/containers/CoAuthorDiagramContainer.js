@@ -4,24 +4,8 @@ import CoAuthorDiagram from '../components/CoAuthorDiagram'
 
 
 const mapStateToProps = state => {
-
-  // ich breche den globalen State auf die jeweiligen props runter
-  // meine props sind das was nachher returned wird
-  // let publications;
-  // if(state.general && state.general.publications){
-  //   publications = state.general.publications
-  // } else {
-  //   publications = []
-  // }
-  // return {
-  //   publications: publications,
-  //   isLoading: state.general.isLoading,
-  //   errorConnection: state.general.errorConnection,
-  //   noInformationFound: state.general.noInformationFound,
-  // }
   var coAuthorArray = [];
   var searchedAuthor = state.general.searchString;
-  // var searchedAuthor = "Kawa Nazemi";
   var data = state.general.publications
 
   data.forEach(function (publication) {
@@ -50,5 +34,4 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  // mapDispatchToProps
 )(CoAuthorDiagram)

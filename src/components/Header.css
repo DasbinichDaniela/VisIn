@@ -21,8 +21,6 @@ input{
   width: 50%;
   max-width: 500px;
   background: transparent;
-  /* margin: 30px; */
-  /* width: 100%; */
   padding: 0px 12px;
 }
 
@@ -44,5 +42,4 @@ textarea:focus, input:focus{
 }
 #searchImage{
   width: 40px;
-    /* color: grey; */
 }

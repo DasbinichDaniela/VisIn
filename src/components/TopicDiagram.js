@@ -23,62 +23,31 @@ class TopicDiagram extends Component {
   createTopicDiagram() {
 
     var settings = {
-      minDate: 0,
-      maxDate: 0,
-      intervalCount: 0,
-      numberOfTicks: 0,
-      rangeXStart: 100,
-      rangeXEnd: 800,
-      highestCount: 0,
-      topicIndexName: [],
-      topicNames: [],
-      annualTopics: this.props.annualTopics,
-      intervalYears: [];
+        minDate: 0,
+        maxDate: 0,
+        intervalCount: 0,
+        numberOfTicks: 0,
+        rangeXStart: 100,
+        rangeXEnd: 800,
+        highestCount: 0,
+        topicIndexName: [],
+        topicNames: [],
+        annualTopics: this.props.annualTopics,
+        intervalYearsArray: [],
+        positionXArray: [],
     }
 
     createScale(settings, this.xAxis)
-    // settings.intervalYears = this.getIntervalYears(settings)
-
-    settings.finalArray = getFinalArray(settings)
+    this.getIntervalsForXAxis(settings)
+    var duplicateAnnualTopicList = this.addIntervalsToTopicList(settings)
+    settings.finalArray = getFinalArray(settings, duplicateAnnualTopicList)
     console.log(settings.finalArray)
     settings.topicNameList = getTopicNames(this.props.topicData, settings)
     settings.height = getHeight(settings.finalArray)
     this.createCircles(settings.finalArray, settings.height, settings.topicNameList, this.chart)
 
-    function getFinalArray(settings){
-      // create Intervals instead of Years to get position in time axis
-      var intervalYearsArray = [];
-      var timeDif = settings.maxDate - settings.minDate;
-      var index = 0;
 
-      for(index; index < timeDif/settings.intervalCount; index++){
-        var intervalYears = [];
-        var i = 0;
-        for(i; i<settings.intervalCount; i++){
-          intervalYears.push(settings.minDate)
-          settings.minDate+=1
-        }
-        // array which show years per interval
-        intervalYearsArray.push(intervalYears)
-      }
-      // get x Valus by the position of the center of intervals on x Axis
-      // positionX is an Array with the final positions for the circle in the Interval
-      var distanceX = (settings.rangeXEnd-settings.rangeXStart)/(timeDif/settings.intervalCount);
-      var index = 0;
-      var positionX = [];
-      var setX = settings.rangeXStart+distanceX/2;
-      for(index; index < intervalYearsArray.length; index++){
-        if(positionX.length == 0){
-          // start range for X neets to be set at first possible line.
-          positionX.push(setX)
-        } else {
-          setX+=distanceX
-          positionX.push(setX)
-        }
-      }
-
-
-      var duplicateAnnualTopicList = getIntervalTopicList(settings.annualTopics, intervalYearsArray);
+    function getFinalArray(settings, duplicateAnnualTopicList){
 
       // get uniqueAnnualTopicList - by reducing objects that contain the same values (same topic in the same interval)
       var duplicateAnnualTopicListString = duplicateAnnualTopicList.map(object => JSON.stringify(object))
@@ -95,35 +64,9 @@ class TopicDiagram extends Component {
       // uniqueAnnualTopicList is now a list with all the topics for each interval
       getYandColorValues(uniqueAnnualTopicList, settings)
       // arrayWithXValues = arrayWithValuesDependentOnXValues(uniqueAnnualTopicList)
-      getXValue(uniqueAnnualTopicList, positionX)
+      getXValue(uniqueAnnualTopicList, settings)
       getRadius(uniqueAnnualTopicList)
       return uniqueAnnualTopicList;
-    }
-
-    function getIntervalTopicList(annualTopics, intervalYearsArray){
-      // change year of topic into interval of topic
-      var annualTopicList = [];
-      for(var index in annualTopics){
-        var intervalYear = 0;
-        var year = annualTopics[index].year
-        var i = 0;
-        for(i in intervalYearsArray){
-          if(year == intervalYearsArray[i]){
-            intervalYear = Number(i)+1;
-          }else{
-            for(var j in intervalYearsArray[i]){
-              if(year == intervalYearsArray[i][j]){
-                intervalYear = Number(i)+1;
-              }
-            }
-          }
-        }
-        var topic = {};
-        topic.interval = intervalYear;
-        topic.topic = annualTopics[index].topic
-        annualTopicList.push(topic)
-      }
-      return annualTopicList;
     }
 
     function getYandColorValues(uniqueAnnualTopicList, settings){
@@ -189,10 +132,10 @@ class TopicDiagram extends Component {
 
 
     // For each Object define X Value according to center of Interval
-    function getXValue(uniqueAnnualTopicList, positionX){
+    function getXValue(uniqueAnnualTopicList, settings){
       for(var index in uniqueAnnualTopicList){
         var intervalNumber = uniqueAnnualTopicList[index].interval-1;
-        uniqueAnnualTopicList[index].x = positionX[intervalNumber]
+        uniqueAnnualTopicList[index].x = settings.positionXArray[intervalNumber]
       }
       return uniqueAnnualTopicList;
     }
@@ -367,6 +310,64 @@ class TopicDiagram extends Component {
                       .attr("x", 800)
                       .attr("y", function (d){return d.y;})
                       .text(function(d){return d.name})
+  }
+
+  getIntervalsForXAxis(settings){
+    // create Intervals instead of Years to get position in time axis
+    var timeDif = settings.maxDate - settings.minDate;
+    var index = 0;
+
+    for(index; index < timeDif/settings.intervalCount; index++){
+      var intervalYears = [];
+      var i = 0;
+      for(i; i<settings.intervalCount; i++){
+        intervalYears.push(settings.minDate)
+        settings.minDate+=1
+      }
+      // array which show years per interval
+      settings.intervalYearsArray.push(intervalYears)
+    }
+    // get x Valus by the position of the center of intervals on x Axis
+    // positionX is an Array with the final positions for the circle in the Interval
+    var distanceX = (settings.rangeXEnd-settings.rangeXStart)/(timeDif/settings.intervalCount);
+    var index = 0;
+    var positionX = [];
+    var setX = settings.rangeXStart+distanceX/2;
+    for(index; index < settings.intervalYearsArray.length; index++){
+      if(settings.positionXArray.length == 0){
+        // start range for X neets to be set at first possible line.
+        settings.positionXArray.push(setX)
+      } else {
+        setX+=distanceX
+        settings.positionXArray.push(setX)
+      }
+    }
+  }
+
+  addIntervalsToTopicList(settings){
+    // change year of topic into interval of topic
+    var annualTopicList = [];
+    for(var index in settings.annualTopics){
+      var intervalYear = 0;
+      var year = settings.annualTopics[index].year
+      var i = 0;
+      for(i in settings.intervalYearsArray){
+        if(year == settings.intervalYearsArray[i]){
+          intervalYear = Number(i)+1;
+        }else{
+          for(var j in settings.intervalYearsArray[i]){
+            if(year == settings.intervalYearsArray[i][j]){
+              intervalYear = Number(i)+1;
+            }
+          }
+        }
+      }
+      var topic = {};
+      topic.interval = intervalYear;
+      topic.topic = settings.annualTopics[index].topic
+      annualTopicList.push(topic)
+    }
+    return annualTopicList;
   }
 
   render() {

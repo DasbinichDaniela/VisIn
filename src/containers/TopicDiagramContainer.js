@@ -9,10 +9,9 @@ const mapStateToProps = state => {
   var annualTopics = [];
   var TOPIC_MIN_RELEVANCE = 0.2
   data.forEach(function (publication) {
-  // include try and catch as some data do not have year infromtion
+  // include try and catch as some data do not have year information
     try {
       var year = parseInt(publication.year[0])
-      // var topics = Object.keys(publication.topics)
       for (var index in publication.topics){
         if(publication.topics[index]>TOPIC_MIN_RELEVANCE){
           var topic = index

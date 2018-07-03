@@ -17,7 +17,7 @@ class TopicDiagram extends Component {
     this.createTopicDiagram()
   }
   componentDidUpdate() {
-    this.createTopicDiagram()
+    // this.createTopicDiagram()
   }
 
   createTopicDiagram() {
@@ -33,14 +33,17 @@ class TopicDiagram extends Component {
       topicIndexName: [],
       topicNames: [],
       annualTopics: this.props.annualTopics,
+      intervalYears: [];
     }
 
     createScale(settings, this.xAxis)
+    // settings.intervalYears = this.getIntervalYears(settings)
+
     settings.finalArray = getFinalArray(settings)
     console.log(settings.finalArray)
     settings.topicNameList = getTopicNames(this.props.topicData, settings)
     settings.height = getHeight(settings.finalArray)
-    createCircles(settings.finalArray, settings.height, settings.topicNameList, this.chart)
+    this.createCircles(settings.finalArray, settings.height, settings.topicNameList, this.chart)
 
     function getFinalArray(settings){
       // create Intervals instead of Years to get position in time axis
@@ -251,56 +254,6 @@ class TopicDiagram extends Component {
       return topicNameList
     }
 
-// height and widht should adjust according to how many topics are included
-// just calculate and multiply needed size by topics
-  function createCircles(finalArray, height, topicNameList, chart){
-    var svgContainer = d3.select(chart).append("svg")
-      .attr("width", 1000)
-      .attr("height", height)
-      .append("g")
-
-    var div = d3.select(chart).append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-
-
-    var circles = svgContainer.selectAll("circle")
-                              .data(finalArray)
-                              .enter()
-                              .append("circle")
-                              .on("mouseover", function(d) {
-                                div.transition()
-                                  .duration(200)
-                                  .style("opacity", .8);
-                                div.html(d.count)
-                                  .style("left", (d3.event.pageX) + "px")
-                                  .style("top", (d3.event.pageY) + "px");
-                              })
-                              .on("mouseout", function(d) {
-                                  div.transition()
-                                      .duration(500)
-                                      .style("opacity", 0);
-                              })
-
-
-    var circleAttributes = circles
-                            .attr("cx", function (d){return d.x;})
-                            .attr("cy", function (d){return d.y;})
-                            .attr("r", function (d){return d.r;})
-                            .style("fill", function(d){return d.color;
-                            })
-
-    var text = svgContainer.selectAll("text")
-                          .data(topicNameList)
-                          .enter()
-                          .append("text");
-
-    var textLabels = text
-                      .attr("x", 800)
-                      .attr("y", function (d){return d.y;})
-                      .text(function(d){return d.name})
-  }
-
   function createScale(settings, xAxis){
     var svg = d3.select(xAxis).append("svg")
                         .attr("width", 1000)
@@ -364,6 +317,56 @@ class TopicDiagram extends Component {
     return minMaxDate
   }
 
+  }
+
+  // height and widht should adjust according to how many topics are included
+  // just calculate and multiply needed size by topics
+  createCircles(finalArray, height, topicNameList, chart){
+    var svgContainer = d3.select(chart).append("svg")
+      .attr("width", 1000)
+      .attr("height", height)
+      .append("g")
+
+    var div = d3.select(chart).append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+
+    var circles = svgContainer.selectAll("circle")
+                              .data(finalArray)
+                              .enter()
+                              .append("circle")
+                              .on("mouseover", function(d) {
+                                div.transition()
+                                  .duration(200)
+                                  .style("opacity", .8);
+                                div.html(d.count)
+                                  .style("left", (d3.event.pageX) + "px")
+                                  .style("top", (d3.event.pageY) + "px");
+                              })
+                              .on("mouseout", function(d) {
+                                  div.transition()
+                                      .duration(500)
+                                      .style("opacity", 0);
+                              })
+
+
+    var circleAttributes = circles
+                            .attr("cx", function (d){return d.x;})
+                            .attr("cy", function (d){return d.y;})
+                            .attr("r", function (d){return d.r;})
+                            .style("fill", function(d){return d.color;
+                            })
+
+    var text = svgContainer.selectAll("text")
+                          .data(topicNameList)
+                          .enter()
+                          .append("text");
+
+    var textLabels = text
+                      .attr("x", 800)
+                      .attr("y", function (d){return d.y;})
+                      .text(function(d){return d.name})
   }
 
   render() {

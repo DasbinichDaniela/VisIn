@@ -35,74 +35,39 @@ class TopicDiagram extends Component {
         annualTopics: this.props.annualTopics,
         intervalYearsArray: [],
         positionXArray: [],
-    }
+        topicSequence: [],
+        finalArray: [],
+        colores: ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"],
+      }
 
     createScale(settings, this.xAxis)
     this.getIntervalsForXAxis(settings)
-    var duplicateAnnualTopicList = this.addIntervalsToTopicList(settings)
-    settings.finalArray = getFinalArray(settings, duplicateAnnualTopicList)
+    this.addIntervalsToTopicList(settings)
+    this.deleteDuplicatesAnnualTopics(settings)
+    this.defineTopicSequence(settings)
+    settings.annualTopics = getYandColorValues(settings)
+    settings.finalArray = getFinalArray(settings)
     console.log(settings.finalArray)
     settings.topicNameList = getTopicNames(this.props.topicData, settings)
     settings.height = getHeight(settings.finalArray)
-    this.createCircles(settings.finalArray, settings.height, settings.topicNameList, this.chart)
+    this.createCircles(settings, this.chart)
 
 
-    function getFinalArray(settings, duplicateAnnualTopicList){
-
-      // get uniqueAnnualTopicList - by reducing objects that contain the same values (same topic in the same interval)
-      var duplicateAnnualTopicListString = duplicateAnnualTopicList.map(object => JSON.stringify(object))
-      var uniqueAnnualTopicList = [];
-      new Set(duplicateAnnualTopicListString).forEach(string => uniqueAnnualTopicList.push(JSON.parse(string)))
-      uniqueAnnualTopicList.forEach((uniqueAnnualTopic) => {
-        uniqueAnnualTopic.count = 0
-        duplicateAnnualTopicList.forEach(function(duplicateAnnualTopic){
-          if (uniqueAnnualTopic.interval == duplicateAnnualTopic.interval && uniqueAnnualTopic.topic == duplicateAnnualTopic.topic){
-            uniqueAnnualTopic.count = uniqueAnnualTopic.count + 1
-           }
-        });
-      });
-      // uniqueAnnualTopicList is now a list with all the topics for each interval
-      getYandColorValues(uniqueAnnualTopicList, settings)
-      // arrayWithXValues = arrayWithValuesDependentOnXValues(uniqueAnnualTopicList)
-      getXValue(uniqueAnnualTopicList, settings)
-      getRadius(uniqueAnnualTopicList)
-      return uniqueAnnualTopicList;
+    function getFinalArray(settings){
+    // arrayWithXValues = arrayWithValuesDependentOnXValues(uniqueAnnualTopicList)
+      getXValue(settings.annualTopics, settings)
+      getRadius(settings.annualTopics)
+      return settings.annualTopics
     }
 
-    function getYandColorValues(uniqueAnnualTopicList, settings){
-      // to get an array in a sequence where the most important topic gets the highest y-Value
-      var topicSequence = [];
-      // looks in uniqueAnnualTopicList for a topic: if topic is available count topics
-      uniqueAnnualTopicList.forEach(function(topicInformation) {
-        var topicExistsInTopicSequence = false;
-        topicSequence.forEach(function(topicNewList){
-          if(topicInformation.topic === topicNewList.topic){
-            topicNewList.count += topicInformation.count
-            topicExistsInTopicSequence = true;
-          }
-        });
-        if(!topicExistsInTopicSequence){
-          topicSequence.push({"topic": topicInformation.topic, "count": topicInformation.count})
-          }
-        });
-        topicSequence.sort(function(a, b){
-          return b.count - a.count;
-        });
-        settings.highestCount = topicSequence[0].count;
-        // get Array with topic names according to topic positions/Sequence
-        for(var index in topicSequence){
-          settings.topicNames.push(topicSequence[index].topic)
-        }
-
-
-
-
+    function getYandColorValues(settings){
         // getColor a different color for each topic (max 20 colours; afterwards they will repeat)
-        var colores = ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"];
+
         var indexColor = 0;
-        for(index in topicSequence){
-          topicSequence[index].color = colores[indexColor];
-          if(indexColor != colores.length){
+        var index = 0;
+        for(index in settings.topicSequence){
+          settings.topicSequence[index].color = settings.colores[indexColor];
+          if(indexColor != settings.colores.length){
             indexColor+=1
           } else {
             indexColor = 0
@@ -110,16 +75,16 @@ class TopicDiagram extends Component {
         }
         // get Y values according to index position of topic in topicSequence
         // The first (last count) topic gets the lowest value 20; then higher up with 20 steps()
-        for(index in topicSequence){
+        for(index in settings.topicSequence){
           var y = index*80+80
-          topicSequence[index].y = y
+          settings.topicSequence[index].y = y
         }
-        // add y Values and colors to each object in uniqueAnnualTopicList according to value of topic
-        uniqueAnnualTopicList.map((topicInformation) => {
-          for(index in uniqueAnnualTopicList){
-            topicSequence.forEach(function(topic){
-              if(uniqueAnnualTopicList[index].topic == topic.topic){
-                var topicInformation = uniqueAnnualTopicList[index]
+        // add y Values and colors to each object in settings.annualTopics according to value of topic
+        settings.annualTopics.map((topicInformation) => {
+          for(index in settings.annualTopics){
+            settings.topicSequence.forEach(function(topic){
+              if(settings.annualTopics[index].topic == topic.topic){
+                var topicInformation = settings.annualTopics[index]
                 topicInformation.y = topic.y
                 topicInformation.color = topic.color
                 return topicInformation
@@ -127,17 +92,17 @@ class TopicDiagram extends Component {
             });
           }
         });
-        return uniqueAnnualTopicList
+        return settings.annualTopics
       }
 
 
     // For each Object define X Value according to center of Interval
     function getXValue(uniqueAnnualTopicList, settings){
-      for(var index in uniqueAnnualTopicList){
+        for(var index in uniqueAnnualTopicList){
         var intervalNumber = uniqueAnnualTopicList[index].interval-1;
         uniqueAnnualTopicList[index].x = settings.positionXArray[intervalNumber]
       }
-      return uniqueAnnualTopicList;
+      settings.annualTopics = uniqueAnnualTopicList;
     }
 
     // get Radius according to count of Values
@@ -155,7 +120,7 @@ class TopicDiagram extends Component {
         var radius = uniqueAnnualTopicList[index].count*RadiusDif+5
         uniqueAnnualTopicList[index].r = radius
       }
-      return uniqueAnnualTopicList
+      settings.annualTopics = uniqueAnnualTopicList
     }
 
     function getHeight(finalArray){
@@ -264,19 +229,18 @@ class TopicDiagram extends Component {
 
   // height and widht should adjust according to how many topics are included
   // just calculate and multiply needed size by topics
-  createCircles(finalArray, height, topicNameList, chart){
+  createCircles(settings, chart){
     var svgContainer = d3.select(chart).append("svg")
       .attr("width", 1000)
-      .attr("height", height)
+      .attr("height", settings.height)
       .append("g")
 
     var div = d3.select(chart).append("div")
       .attr("class", "tooltip")
       .style("opacity", 0);
 
-
     var circles = svgContainer.selectAll("circle")
-                              .data(finalArray)
+                              .data(settings.annualTopics)
                               .enter()
                               .append("circle")
                               .on("mouseover", function(d) {
@@ -302,7 +266,7 @@ class TopicDiagram extends Component {
                             })
 
     var text = svgContainer.selectAll("text")
-                          .data(topicNameList)
+                          .data(settings.topicNameList)
                           .enter()
                           .append("text");
 
@@ -367,7 +331,48 @@ class TopicDiagram extends Component {
       topic.topic = settings.annualTopics[index].topic
       annualTopicList.push(topic)
     }
-    return annualTopicList;
+    settings.annualTopics = annualTopicList;
+  }
+
+  deleteDuplicatesAnnualTopics(settings){
+    // get uniqueAnnualTopicList - by reducing objects that contain the same values (same topic in the same interval)
+    var duplicateAnnualTopicListString = settings.annualTopics.map(object => JSON.stringify(object))
+    var uniqueAnnualTopicList = [];
+    new Set(duplicateAnnualTopicListString).forEach(string => uniqueAnnualTopicList.push(JSON.parse(string)))
+    uniqueAnnualTopicList.forEach((uniqueAnnualTopic) => {
+      uniqueAnnualTopic.count = 0
+      settings.annualTopics.forEach(function(duplicateAnnualTopic){
+        if (uniqueAnnualTopic.interval == duplicateAnnualTopic.interval && uniqueAnnualTopic.topic == duplicateAnnualTopic.topic){
+          uniqueAnnualTopic.count = uniqueAnnualTopic.count + 1
+         }
+      });
+    });
+    settings.annualTopics = uniqueAnnualTopicList
+  }
+
+  defineTopicSequence(settings){
+    // to get an array in a sequence where the most important topic gets the highest y-Value
+    // looks in settings.annualTopics for a topic: if topic is available count topics
+    settings.annualTopics.forEach(function(topicInformation) {
+        var topicExistsInTopicSequence = false;
+        settings.topicSequence.forEach(function(topicNewList){
+          if(topicInformation.topic === topicNewList.topic){
+            topicNewList.count += topicInformation.count
+            topicExistsInTopicSequence = true;
+          }
+        });
+        if(!topicExistsInTopicSequence){
+          settings.topicSequence.push({"topic": topicInformation.topic, "count": topicInformation.count})
+          }
+      });
+      settings.topicSequence.sort(function(a, b){
+        return b.count - a.count;
+      });
+      settings.highestCount = settings.topicSequence[0].count;
+      // get Array with topic names according to topic positions/Sequence
+      for(var index in settings.topicSequence){
+        settings.topicNames.push(settings.topicSequence[index].topic)
+      }
   }
 
   render() {

@@ -4,7 +4,7 @@ import { startSearch } from '../actions'
 import './Header.css'
 
 const Header = ({ dispatch }) => {
-  let input
+  var input;
 
   return (
     <div className="header">

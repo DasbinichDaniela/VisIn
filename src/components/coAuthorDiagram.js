@@ -4,15 +4,8 @@ import * as d3 from "d3"
 
 
 class CoAuthorDiagram extends Component {
-   constructor(props){
-      super(props)
-      this.createCoAuthorDiagram = this.createCoAuthorDiagram.bind(this)
-   }
    componentDidMount() {
       this.createCoAuthorDiagram()
-   }
-   componentDidUpdate() {
-      // this.createCoAuthorDiagram()
    }
    createCoAuthorDiagram() {
      var coAuthorArray = this.props.coAuthorArray

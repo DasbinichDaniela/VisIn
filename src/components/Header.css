@@ -18,7 +18,7 @@ input{
   border-bottom: 5px solid grey;
   color: grey;
   align-self: center;
-  width: 50%;
+  width: 30%;
   max-width: 500px;
   background: transparent;
   padding: 0px 12px;
@@ -38,8 +38,16 @@ textarea:focus, input:focus{
 }
 #VisIn_Logo{
   height: 85px;
+  margin-top: 5px;
+  margin-left: -20px;
   position: absolute;
 }
 #searchImage{
   width: 40px;
+}
+@media only screen and (max-width: 1000px) {
+  #VisIn_Logo {
+    /* position: relative; */
+    display: none;
+  }
 }

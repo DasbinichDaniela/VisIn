@@ -6,12 +6,13 @@
   overflow-x: hidden;
 }
 
-.topicDiagram{
+#topicDiagramContainer{
+  width: 1000px;
   border-style: solid;
   border-width: 5px;
   border-radius: 12px;
   border-color: #E9E9E9;
-  height: 700px;
+  height: 710px;
 }
 
 div.tooltip {
@@ -27,6 +28,6 @@ div.tooltip {
     pointer-events: none;
 }
 
-text{
+#topicDiagramContainer text {
   font: 15px sans-serif;
 }

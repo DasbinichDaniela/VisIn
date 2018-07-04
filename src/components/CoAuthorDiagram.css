@@ -4,7 +4,7 @@
   stroke-width: 3px;
 }
 .node text {
-  font: 12px sans-serif; 
+  font: 12px sans-serif;
 }
 
 .link {
@@ -12,7 +12,6 @@
   stroke: #ccc;
   stroke-width: 2px;
 }
-
 
 .coAuthorDiagram{
   max-width: 500px;
@@ -27,4 +26,13 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: 700px;
+}
+
+@media only screen and (max-width: 1600px) {
+  body{
+    overflow: auto;
+  }
+  .coAuthorDiagram{
+    margin-bottom: 50px;
+  }
 }

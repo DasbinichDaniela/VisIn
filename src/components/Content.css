@@ -26,19 +26,19 @@ body{
   width: -webkit-fill-available;
 }
 
-#rectEins{
+#rectOne{
   background-color: grey;
   width: 80px;
   height: 40px;
   flex-grow: 1;
 }
-#rectZwei{
+#rectTwo{
   background-color: #70A896;
   width: 80px;
   height: 40px;
   flex-grow: 1;
 }
-#rectDrei{
+#rectThree{
   background-color: #E9E9E9;
   width: 80px;
   height: 40px;
@@ -58,4 +58,15 @@ body{
   display: flex;
   justify-content: center;
   margin-top: 200px;
+}
+
+@media only screen and (max-width: 1600px) {
+  body{
+    overflow: auto;
+  }
+  .rowComponents{
+    flex-direction: column;
+    padding: 50px;
+    align-items: center;
+  }
 }

@@ -11,17 +11,19 @@ const Content = ({startScreen, publications, isLoading, errorConnection, noInfor
           <img id="VisIn_Logo_2" src={require("../assets/VisIn_Logo_2.png")} />
         </div>
         <div className="rect">
-          <div id="rectEins"/>
-          <div id="rectZwei"/>
-          <div id="rectDrei"/>
+          <div id="rectOne"/>
+          <div id="rectTwo"/>
+          <div id="rectThree"/>
         </div>
       </div>
     }
+
     {isLoading &&
       <div id="loadingScreen">
         <h1>Please wait, we are loading your information!</h1>
       </div>
     }
+
     {errorConnection &&
       <div id="errorScreen">
         <h1>There was a server error, please try again later.</h1>
@@ -33,6 +35,7 @@ const Content = ({startScreen, publications, isLoading, errorConnection, noInfor
         <h1>There is no author with that name, please try again.</h1>
       </div>
     }
+
     <div className='rowComponents'>
       {publications.length>0 &&
         <CoAuthorDiagramContainer />

@@ -25,6 +25,7 @@ class TopicDiagram extends Component {
     var settings = {
         minDate: 0,
         maxDate: 0,
+        minMaxDate: 0,
         intervalCount: 0,
         numberOfTicks: 0,
         rangeXStart: 100,
@@ -32,6 +33,7 @@ class TopicDiagram extends Component {
         highestCount: 0,
         topicIndexName: [],
         topicNames: [],
+        originalArrayTopics: this.props.annualTopics,
         annualTopics: this.props.annualTopics,
         intervalYearsArray: [],
         positionXArray: [],
@@ -41,8 +43,12 @@ class TopicDiagram extends Component {
         colores: ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"],
       }
 
-    createScale(settings, this.xAxis)
+    this.calculateMinMaxDate(settings)
+    this.calculateSpecsForXAxis(settings)
     this.getIntervalsForXAxis(settings)
+    this.createScale(settings, this.xAxis)
+
+
     this.addIntervalsToTopicList(settings)
     this.deleteDuplicatesAnnualTopics(settings)
     // Define Topics, Sequence, Colors and Y Values.
@@ -56,72 +62,9 @@ class TopicDiagram extends Component {
     this.addYValueForTopicNames(this.props.topicData, settings)
     // settings.topicNameList = addYValueForTopicNames(this.props.topicData, settings)
     this.calculateHeightOfDiagram(settings)
+
     this.createCircles(settings, this.chart)
 
-
-
-  function createScale(settings, xAxis){
-    var svg = d3.select(xAxis).append("svg")
-                        .attr("width", 1000)
-                        .attr("height", 100);
-
-    var minMaxDate = calculateMinMax(settings.annualTopics);
-
-    settings.minDate = minMaxDate[0];
-    settings.maxDate = minMaxDate[1];
-
-    getAxisSpecs(settings)
-
-    var axisScale = d3.scaleTime()
-          .domain([new Date(settings.minDate, 0, 1), new Date(settings.maxDate, 0, 1)])
-          .range([100, 800]);
-
-    var xAxis = d3.axisBottom()
-      .scale(axisScale)
-      .ticks(settings.numberOfTicks)
-      .tickSize(10)
-      .tickFormat(d3.timeFormat("%Y"));
-
-      // transform sets scale y pixel downwards
-      var xAxisGroup = svg.append("g")
-          .attr("transform", "translate(0, 50)")
-          .call(xAxis);
-
-    }
-
-  function getAxisSpecs(settings){
-    var difTime = settings.maxDate-settings.minDate+1
-    var aggregationNumber = 1
-    if((difTime)<1){
-      settings.numberOfTicks = difTime
-      settings.intervalCount = 1;
-    }
-    else {
-      var aggregationArray = [2, 5, 10, 20, 50, 100]
-      var count = null;
-      for (var index in aggregationArray){
-        var count = Math.ceil(difTime/aggregationArray[index])
-        if (count<10){
-          console.log(aggregationNumber)
-          settings.numberOfTicks = count
-          aggregationNumber = aggregationArray[index]
-          settings.intervalCount = aggregationNumber
-          break;
-        }
-      }
-    }
-      // new min and max date for better/more intuitiv count on axis
-    settings.minDate = Math.floor(settings.minDate/aggregationNumber)*aggregationNumber
-    settings.maxDate = Math.ceil(settings.maxDate/aggregationNumber)*aggregationNumber
-  }
-
-  function calculateMinMax(annualTopics){
-    annualTopics.sort(function(a,b){
-      return a.year - b.year
-    });
-    var minMaxDate = [annualTopics[0].year, annualTopics[annualTopics.length-1].year+1]
-    return minMaxDate
-  }
 };
 
   // height and widht should adjust according to how many topics are included
@@ -156,7 +99,9 @@ class TopicDiagram extends Component {
 
 
     var circleAttributes = circles
-                            .attr("cx", function (d){return d.x;})
+                            .attr("cx", function (d){
+                              return d.x;
+                            })
                             .attr("cy", function (d){return d.y;})
                             .attr("r", function (d){return d.r;})
                             .style("fill", function(d){return d.color;
@@ -178,14 +123,16 @@ class TopicDiagram extends Component {
   getIntervalsForXAxis(settings){
     // create Intervals instead of Years to get position in time axis
     var timeDif = settings.maxDate - settings.minDate;
+    var minDate = settings.minDate
     var index = 0;
 
     for(index; index < timeDif/settings.intervalCount; index++){
       var intervalYears = [];
       var i = 0;
+
       for(i; i<settings.intervalCount; i++){
-        intervalYears.push(settings.minDate)
-        settings.minDate+=1
+        intervalYears.push(minDate)
+        minDate+=1
       }
       // array which show years per interval
       settings.intervalYearsArray.push(intervalYears)
@@ -376,6 +323,66 @@ class TopicDiagram extends Component {
       }
     }
   }
+
+  calculateSpecsForXAxis(settings){
+
+  }
+  calculateMinMaxDate(settings){
+    settings.originalArrayTopics.sort(function(a,b){
+      return a.year - b.year
+    });
+    settings.minDate = settings.originalArrayTopics[0].year;
+    settings.maxDate = settings.originalArrayTopics[settings.originalArrayTopics.length-1].year+1;
+    // settings.minMaxDate = [settings.annualTopics[0].year, settings.annualTopics[settings.annualTopics.length-1].year+1]
+  }
+
+  createScale(settings, xAxis){
+    var svg = d3.select(xAxis).append("svg")
+                        .attr("width", 1000)
+                        .attr("height", 100);
+
+    var axisScale = d3.scaleTime()
+          .domain([new Date(settings.minDate, 0, 1), new Date(settings.maxDate, 0, 1)])
+          .range([100, 800]);
+
+    var xAxis = d3.axisBottom()
+      .scale(axisScale)
+      .ticks(settings.numberOfTicks)
+      .tickSize(10)
+      .tickFormat(d3.timeFormat("%Y"));
+
+      // transform sets scale y pixel downwards
+      var xAxisGroup = svg.append("g")
+          .attr("transform", "translate(0, 50)")
+          .call(xAxis);
+    }
+
+    calculateSpecsForXAxis(settings){
+      var difTime = settings.maxDate-settings.minDate+1
+      var aggregationNumber = 1
+      if((difTime)<1){
+        settings.numberOfTicks = difTime
+        settings.intervalCount = 1;
+      }
+      else {
+        var aggregationArray = [2, 5, 10, 20, 50, 100]
+        var count = null;
+        for (var index in aggregationArray){
+          var count = Math.ceil(difTime/aggregationArray[index])
+          if (count<10){
+            console.log(aggregationNumber)
+            settings.numberOfTicks = count
+            aggregationNumber = aggregationArray[index]
+            settings.intervalCount = aggregationNumber
+            break;
+          }
+        }
+      }
+        // new min and max date for better/more intuitiv count on axis
+      settings.minDate = Math.floor(settings.minDate/aggregationNumber)*aggregationNumber
+      settings.maxDate = Math.ceil(settings.maxDate/aggregationNumber)*aggregationNumber
+    }
+
 
   render() {
     return (

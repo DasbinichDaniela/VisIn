@@ -37,6 +37,7 @@ class TopicDiagram extends Component {
         positionXArray: [],
         topicSequence: [],
         finalArray: [],
+        diagramHeight: 0,
         colores: ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"],
       }
 
@@ -44,94 +45,18 @@ class TopicDiagram extends Component {
     this.getIntervalsForXAxis(settings)
     this.addIntervalsToTopicList(settings)
     this.deleteDuplicatesAnnualTopics(settings)
+    // Define Topics, Sequence, Colors and Y Values.
     this.defineTopicSequence(settings)
-    settings.annualTopics = getYandColorValues(settings)
-    settings.finalArray = getFinalArray(settings)
+    this.addColorsForEachTopic(settings)
+    this.addYValueForEachTopic(settings)
+    this.addTopicSequenceDataToAnnualTopics(settings)
+    this.addXValueToAnnualTopics(settings)
+    this.addRadiusToAnnualTopics(settings)
+    settings.finalArray = settings.annualTopics
     console.log(settings.finalArray)
     settings.topicNameList = getTopicNames(this.props.topicData, settings)
-    settings.height = getHeight(settings.finalArray)
+    this.calculateHeightOfDiagram(settings)
     this.createCircles(settings, this.chart)
-
-
-    function getFinalArray(settings){
-    // arrayWithXValues = arrayWithValuesDependentOnXValues(uniqueAnnualTopicList)
-      getXValue(settings.annualTopics, settings)
-      getRadius(settings.annualTopics)
-      return settings.annualTopics
-    }
-
-    function getYandColorValues(settings){
-        // getColor a different color for each topic (max 20 colours; afterwards they will repeat)
-
-        var indexColor = 0;
-        var index = 0;
-        for(index in settings.topicSequence){
-          settings.topicSequence[index].color = settings.colores[indexColor];
-          if(indexColor != settings.colores.length){
-            indexColor+=1
-          } else {
-            indexColor = 0
-          }
-        }
-        // get Y values according to index position of topic in topicSequence
-        // The first (last count) topic gets the lowest value 20; then higher up with 20 steps()
-        for(index in settings.topicSequence){
-          var y = index*80+80
-          settings.topicSequence[index].y = y
-        }
-        // add y Values and colors to each object in settings.annualTopics according to value of topic
-        settings.annualTopics.map((topicInformation) => {
-          for(index in settings.annualTopics){
-            settings.topicSequence.forEach(function(topic){
-              if(settings.annualTopics[index].topic == topic.topic){
-                var topicInformation = settings.annualTopics[index]
-                topicInformation.y = topic.y
-                topicInformation.color = topic.color
-                return topicInformation
-              }
-            });
-          }
-        });
-        return settings.annualTopics
-      }
-
-
-    // For each Object define X Value according to center of Interval
-    function getXValue(uniqueAnnualTopicList, settings){
-        for(var index in uniqueAnnualTopicList){
-        var intervalNumber = uniqueAnnualTopicList[index].interval-1;
-        uniqueAnnualTopicList[index].x = settings.positionXArray[intervalNumber]
-      }
-      settings.annualTopics = uniqueAnnualTopicList;
-    }
-
-    // get Radius according to count of Values
-    function getRadius(uniqueAnnualTopicList){
-      var maxValue = 0;
-      for(var index in uniqueAnnualTopicList){
-        if(uniqueAnnualTopicList[index].count>maxValue){
-          maxValue = uniqueAnnualTopicList[index].count
-        }
-      }
-      var minRadius = 5;
-      var maxRadius = 40;
-      var RadiusDif = 35/maxValue
-      for(var index in uniqueAnnualTopicList){
-        var radius = uniqueAnnualTopicList[index].count*RadiusDif+5
-        uniqueAnnualTopicList[index].r = radius
-      }
-      settings.annualTopics = uniqueAnnualTopicList
-    }
-
-    function getHeight(finalArray){
-      var height = 0;
-      for(var index in finalArray){
-        if(height<finalArray[index].y){
-          height = finalArray[index].y + 40
-        }
-      }
-      return height
-    }
 
     function getTopicNames(topicData, settings){
       var topicNameList = [];
@@ -184,12 +109,12 @@ class TopicDiagram extends Component {
       .tickSize(10)
       .tickFormat(d3.timeFormat("%Y"));
 
-  // transform sets scale y pixel downwards
-    var xAxisGroup = svg.append("g")
-        .attr("transform", "translate(0, 50)")
-        .call(xAxis);
+      // transform sets scale y pixel downwards
+      var xAxisGroup = svg.append("g")
+          .attr("transform", "translate(0, 50)")
+          .call(xAxis);
 
-  }
+    }
 
   function getAxisSpecs(settings){
     var difTime = settings.maxDate-settings.minDate+1
@@ -224,15 +149,14 @@ class TopicDiagram extends Component {
     var minMaxDate = [annualTopics[0].year, annualTopics[annualTopics.length-1].year+1]
     return minMaxDate
   }
-
-  }
+};
 
   // height and widht should adjust according to how many topics are included
   // just calculate and multiply needed size by topics
   createCircles(settings, chart){
     var svgContainer = d3.select(chart).append("svg")
       .attr("width", 1000)
-      .attr("height", settings.height)
+      .attr("height", settings.diagramHeight)
       .append("g")
 
     var div = d3.select(chart).append("div")
@@ -373,6 +297,79 @@ class TopicDiagram extends Component {
       for(var index in settings.topicSequence){
         settings.topicNames.push(settings.topicSequence[index].topic)
       }
+  }
+
+  addColorsForEachTopic(settings){
+    // getColor a different color for each topic (max 20 colours; afterwards they will repeat)
+    var indexColor = 0;
+    var index = 0;
+    for(index in settings.topicSequence){
+      settings.topicSequence[index].color = settings.colores[indexColor];
+      if(indexColor != settings.colores.length){
+        indexColor+=1
+      } else {
+        indexColor = 0
+      }
+    }
+  }
+
+  addYValueForEachTopic(settings){
+    // get Y values according to index position of topic in topicSequence
+    // The first (last count) topic gets the lowest value 20; then higher up with 20 steps()
+    var index = 0;
+    for(index in settings.topicSequence){
+      var y = index*80+80
+      settings.topicSequence[index].y = y
+    }
+  }
+
+  addTopicSequenceDataToAnnualTopics(settings){
+      // add y Values and colors to each object in settings.annualTopics according to value of topic
+    var index = 0;
+    settings.annualTopics.map((topicInformation) => {
+      for(index in settings.annualTopics){
+        settings.topicSequence.forEach(function(topic){
+          if(settings.annualTopics[index].topic == topic.topic){
+            var topicInformation = settings.annualTopics[index]
+            topicInformation.y = topic.y
+            topicInformation.color = topic.color
+            return topicInformation
+          }
+        });
+      }
+    });
+  }
+
+  // For each Object define X Value according to center of Interval
+  addXValueToAnnualTopics(settings){
+      for(var index in settings.annualTopics){
+      var intervalNumber = settings.annualTopics[index].interval-1;
+      settings.annualTopics[index].x = settings.positionXArray[intervalNumber]
+    }
+  }
+
+  addRadiusToAnnualTopics(settings){
+    var maxValue = 0;
+    for(var index in settings.annualTopics){
+      if(settings.annualTopics[index].count>maxValue){
+        maxValue = settings.annualTopics[index].count
+      }
+    }
+    var minRadius = 5;
+    var maxRadius = 40;
+    var RadiusDif = 35/maxValue
+    for(var index in settings.annualTopics){
+      var radius = settings.annualTopics[index].count*RadiusDif+5
+      settings.annualTopics[index].r = radius
+    }
+  }
+
+  calculateHeightOfDiagram(settings){
+    for(var index in settings.annualTopics){
+      if(settings.diagramHeight<settings.annualTopics[index].y){
+        settings.diagramHeight = settings.annualTopics[index].y + 40
+      }
+    }
   }
 
   render() {

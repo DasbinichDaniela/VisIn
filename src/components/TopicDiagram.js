@@ -36,8 +36,8 @@ class TopicDiagram extends Component {
         intervalYearsArray: [],
         positionXArray: [],
         topicSequence: [],
-        finalArray: [],
         diagramHeight: 0,
+        topicNameList: [],
         colores: ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"],
       }
 
@@ -52,40 +52,13 @@ class TopicDiagram extends Component {
     this.addTopicSequenceDataToAnnualTopics(settings)
     this.addXValueToAnnualTopics(settings)
     this.addRadiusToAnnualTopics(settings)
-    settings.finalArray = settings.annualTopics
-    console.log(settings.finalArray)
-    settings.topicNameList = getTopicNames(this.props.topicData, settings)
+    this.getListOfTopicNames(this.props.topicData, settings)
+    this.addYValueForTopicNames(this.props.topicData, settings)
+    // settings.topicNameList = addYValueForTopicNames(this.props.topicData, settings)
     this.calculateHeightOfDiagram(settings)
     this.createCircles(settings, this.chart)
 
-    function getTopicNames(topicData, settings){
-      var topicNameList = [];
-      // use phrases as they are more clear about the topic
-      // If phrases get too long, use the words instead for topic names
-      for(var index in settings.topicNames){
-        var indexNumberTopic = settings.topicNames[index]
-        var topicString = null;
-        if(topicData[indexNumberTopic].phrase[0][0].length<40){
-          topicString = topicData[indexNumberTopic].phrase[0][0]
-        }else {
-          topicString = topicData[indexNumberTopic].word[0][0]
-        }
 
-        var topic = {};
-        topic.id = indexNumberTopic
-        topic.name = topicString
-        topicNameList.push(topic)
-      }
-      for(var indexList in topicNameList){
-        for(var indexFinalArray in settings.finalArray){
-          if(topicNameList[indexList].id == settings.finalArray[indexFinalArray].topic){
-            topicNameList[indexList].y = settings.finalArray[indexFinalArray].y
-            break;
-          }
-        }
-      }
-      return topicNameList
-    }
 
   function createScale(settings, xAxis){
     var svg = d3.select(xAxis).append("svg")
@@ -188,6 +161,8 @@ class TopicDiagram extends Component {
                             .attr("r", function (d){return d.r;})
                             .style("fill", function(d){return d.color;
                             })
+
+
 
     var text = svgContainer.selectAll("text")
                           .data(settings.topicNameList)
@@ -368,6 +343,36 @@ class TopicDiagram extends Component {
     for(var index in settings.annualTopics){
       if(settings.diagramHeight<settings.annualTopics[index].y){
         settings.diagramHeight = settings.annualTopics[index].y + 40
+      }
+    }
+  }
+
+  getListOfTopicNames(topicData, settings){
+    // use phrases as they are more clear about the topic
+    // If phrases get too long, use the words instead for topic names
+    for(var index in settings.topicNames){
+      var indexNumberTopic = settings.topicNames[index]
+      var topicString = null;
+      if(topicData[indexNumberTopic].phrase[0][0].length<40){
+        topicString = topicData[indexNumberTopic].phrase[0][0]
+      }else {
+        topicString = topicData[indexNumberTopic].word[0][0]
+      }
+
+      var topic = {};
+      topic.id = indexNumberTopic
+      topic.name = topicString
+      settings.topicNameList.push(topic)
+    }
+  }
+
+  addYValueForTopicNames(topicData, settings){
+    for(var index in settings.topicNameList){
+      for(var indexFinalArray in settings.annualTopics){
+        if(settings.topicNameList[index].id == settings.annualTopics[indexFinalArray].topic){
+          settings.topicNameList[index].y = settings.annualTopics[indexFinalArray].y
+          break;
+        }
       }
     }
   }

@@ -42,7 +42,7 @@ class CoAuthorDiagram extends Component {
       var i = 0,
           duration = 750,
           root;
-          
+
       // d3.tree creates a new tree layout with default settings
       var treemap = d3.tree().size([height, width]);
       // Assigns parent, children, height, depth
@@ -65,12 +65,12 @@ class CoAuthorDiagram extends Component {
         nodes.forEach(function(d){ d.y = d.depth * 180});
 
         // ****************** Nodes section ***************************
-        
+
         var node = svg.selectAll('g.node')
             .data(nodes, function(d) {
               return d.id || (d.id = ++i);
             })
-            
+
 
             // Enter any new nodes at the parent's previous position.
         var nodeEnter = node.enter().append('g')
@@ -108,7 +108,7 @@ class CoAuthorDiagram extends Component {
             });
 
         var nodeUpdate = nodeEnter.merge(node);
-        
+
         // Transition to the proper position for the node
         nodeUpdate.transition()
           .duration(duration)
@@ -119,7 +119,7 @@ class CoAuthorDiagram extends Component {
             }
               return "translate(" + d.y + "," + d.x + ")";
            });
-           
+
         // Update the node attributes and style
         // Adjust size of Bubbles according to Count of Publications
 
@@ -127,10 +127,10 @@ class CoAuthorDiagram extends Component {
         var countArray = coAuthorArray.map(author => author.count);
         var max = d3.max(countArray);
         var radiusScale = d3.scaleLinear().range([1, multiplier]).domain([0, max])
-        
-        var div = d3.select('circle.node').append("div")
-          .attr("class", "tooltip")
-          .style("opacity", 1e-6);
+
+        // var div = d3.select('circle.node').append("div")
+        //   .attr("class", "tooltip")
+        //   .style("opacity", 1e-6);
 
         nodeUpdate.select('circle.node')
           .attr('r', function(d){

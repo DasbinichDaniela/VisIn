@@ -9,6 +9,7 @@ const mapStateToProps = state => {
   var data = state.general.publications
 
   data.forEach(function (publication) {
+    if(!publication.author) return false; // go to next publication
     publication.author.forEach(function(author){
       if(author.toLowerCase() === searchedAuthor.toLowerCase()){
         return true;

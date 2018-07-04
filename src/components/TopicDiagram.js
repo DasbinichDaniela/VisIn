@@ -1,53 +1,35 @@
 import React, { Component } from 'react'
 import './TopicDiagram.css'
-// import './App.css'
-// import { scaleLinear } from 'd3-scale'
-// import { max } from 'd3-array'
-// import { select } from 'd3-selection'
-
 import * as d3 from "d3"
 
 
 class TopicDiagram extends Component {
-  constructor(props){
-    super(props)
-    this.createTopicDiagram = this.createTopicDiagram.bind(this)
-  }
   componentDidMount() {
     this.createTopicDiagram()
-  }
-  componentDidUpdate() {
-    // this.createTopicDiagram()
   }
 
   createTopicDiagram() {
 
     var settings = {
+        diagramHeight: 0,
         minDate: 0,
         maxDate: 0,
-        minMaxDate: 0,
         intervalCount: 0,
         numberOfTicks: 0,
-        rangeXStart: 100,
-        rangeXEnd: 800,
-        highestCount: 0,
-        topicIndexName: [],
-        topicNames: [],
         originalArrayTopics: this.props.annualTopics,
         authorsTopicList: this.props.annualTopics,
         intervalYearsArray: [],
         positionXArray: [],
-        topicSequence: [],
-        diagramHeight: 0,
+        topicListOrdered: [],
+        topicNames: [],
         topicNameList: [],
-        colores: ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"],
+        colors: ["#0B132B", "#70A896", "#BA3939", "#1C2541", "#3A506B", "#B8D8D9", "#81B29A", "#757575", "#B8C679", "#EAEAEA", "#E2856E", "#2B0E10", "#950D25", "#8D0D30", "#4D4D60"],
       }
 
     this.calculateMinMaxDate(settings)
     this.calculateSpecsForXAxis(settings)
-    this.getIntervalsForXAxis(settings)
+    this.calculateIntervalsForXAxis(settings)
     this.createXAxis(settings, this.xAxis)
-
 
     this.addIntervalsToAuthorsTopicList(settings)
     this.deleteDuplicatesInAuthorsTopicList(settings)
@@ -58,7 +40,7 @@ class TopicDiagram extends Component {
     this.addTopicSequenceDataToAuthorsTopicList(settings)
     this.addXValueToAuthorsTopicList(settings)
     this.addRadiusToAuthorsTopicList(settings)
-    this.getListOfTopicNames(this.props.topicData, settings)
+    this.createListOfTopicNames(this.props.topicData, settings)
     this.addYValueForTopicNames(this.props.topicData, settings)
     // settings.topicNameList = addYValueForTopicNames(this.props.topicData, settings)
     this.calculateHeightOfDiagram(settings)
@@ -117,7 +99,7 @@ class TopicDiagram extends Component {
                       .text(function(d){return d.name})
   }
 
-  getIntervalsForXAxis(settings){
+  calculateIntervalsForXAxis(settings){
     // create Intervals instead of Years to get position in time axis
     var timeDif = settings.maxDate - settings.minDate;
     var minDate = settings.minDate
@@ -136,10 +118,12 @@ class TopicDiagram extends Component {
     }
     // get x Valus by the position of the center of intervals on x Axis
     // positionX is an Array with the final positions for the circle in the Interval
-    var distanceX = (settings.rangeXEnd-settings.rangeXStart)/(timeDif/settings.intervalCount);
+    var rangeXStart = 100;
+    var rangeXEnd = 800;
+    var distanceX = (rangeXEnd-rangeXStart)/(timeDif/settings.intervalCount);
     var index = 0;
     var positionX = [];
-    var setX = settings.rangeXStart+distanceX/2;
+    var setX = rangeXStart+distanceX/2;
     for(index; index < settings.intervalYearsArray.length; index++){
       if(settings.positionXArray.length == 0){
         // start range for X neets to be set at first possible line.
@@ -198,23 +182,22 @@ class TopicDiagram extends Component {
     // looks in settings.authorsTopicList for a topic: if topic is available count topics
     settings.authorsTopicList.forEach(function(topicInformation) {
         var topicExistsInTopicSequence = false;
-        settings.topicSequence.forEach(function(topicNewList){
+        settings.topicListOrdered.forEach(function(topicNewList){
           if(topicInformation.topic === topicNewList.topic){
             topicNewList.count += topicInformation.count
             topicExistsInTopicSequence = true;
           }
         });
         if(!topicExistsInTopicSequence){
-          settings.topicSequence.push({"topic": topicInformation.topic, "count": topicInformation.count})
+          settings.topicListOrdered.push({"topic": topicInformation.topic, "count": topicInformation.count})
           }
       });
-      settings.topicSequence.sort(function(a, b){
+      settings.topicListOrdered.sort(function(a, b){
         return b.count - a.count;
       });
-      settings.highestCount = settings.topicSequence[0].count;
       // get Array with topic names according to topic positions/Sequence
-      for(var index in settings.topicSequence){
-        settings.topicNames.push(settings.topicSequence[index].topic)
+      for(var index in settings.topicListOrdered){
+        settings.topicNames.push(settings.topicListOrdered[index].topic)
       }
   }
 
@@ -222,9 +205,9 @@ class TopicDiagram extends Component {
     // getColor a different color for each topic (max 20 colours; afterwards they will repeat)
     var indexColor = 0;
     var index = 0;
-    for(index in settings.topicSequence){
-      settings.topicSequence[index].color = settings.colores[indexColor];
-      if(indexColor != settings.colores.length){
+    for(index in settings.topicListOrdered){
+      settings.topicListOrdered[index].color = settings.colors[indexColor];
+      if(indexColor != settings.colors.length){
         indexColor+=1
       } else {
         indexColor = 0
@@ -233,12 +216,12 @@ class TopicDiagram extends Component {
   }
 
   addYValueForEachTopic(settings){
-    // get Y values according to index position of topic in topicSequence
+    // get Y values according to index position of topic in topicListOrdered
     // The first (last count) topic gets the lowest value 20; then higher up with 20 steps()
     var index = 0;
-    for(index in settings.topicSequence){
+    for(index in settings.topicListOrdered){
       var y = index*80+80
-      settings.topicSequence[index].y = y
+      settings.topicListOrdered[index].y = y
     }
   }
 
@@ -247,7 +230,7 @@ class TopicDiagram extends Component {
     var index = 0;
     settings.authorsTopicList.map((topicInformation) => {
       for(index in settings.authorsTopicList){
-        settings.topicSequence.forEach(function(topic){
+        settings.topicListOrdered.forEach(function(topic){
           if(settings.authorsTopicList[index].topic == topic.topic){
             var topicInformation = settings.authorsTopicList[index]
             topicInformation.y = topic.y
@@ -261,7 +244,7 @@ class TopicDiagram extends Component {
 
   // For each Object define X Value according to center of Interval
   addXValueToAuthorsTopicList(settings){
-      for(var index in settings.authorsTopicList){
+    for(var index in settings.authorsTopicList){
       var intervalNumber = settings.authorsTopicList[index].interval-1;
       settings.authorsTopicList[index].x = settings.positionXArray[intervalNumber]
     }
@@ -291,7 +274,7 @@ class TopicDiagram extends Component {
     }
   }
 
-  getListOfTopicNames(topicData, settings){
+  createListOfTopicNames(topicData, settings){
     // use phrases as they are more clear about the topic
     // If phrases get too long, use the words instead for topic names
     for(var index in settings.topicNames){
@@ -321,16 +304,12 @@ class TopicDiagram extends Component {
     }
   }
 
-  calculateSpecsForXAxis(settings){
-
-  }
   calculateMinMaxDate(settings){
     settings.originalArrayTopics.sort(function(a,b){
       return a.year - b.year
     });
     settings.minDate = settings.originalArrayTopics[0].year;
     settings.maxDate = settings.originalArrayTopics[settings.originalArrayTopics.length-1].year+1;
-    // settings.minMaxDate = [settings.authorsTopicList[0].year, settings.authorsTopicList[settings.authorsTopicList.length-1].year+1]
   }
 
   createXAxis(settings, xAxis){
@@ -383,7 +362,7 @@ class TopicDiagram extends Component {
 
   render() {
     return (
-      <div className="topicDiagram">
+      <div id="topicDiagramContainer">
         <div id="topicChart" ref={node => this.chart = node}></div>
         <div ref={node => this.xAxis = node}></div>
       </div>

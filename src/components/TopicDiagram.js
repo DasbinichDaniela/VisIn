@@ -34,7 +34,7 @@ class TopicDiagram extends Component {
         topicIndexName: [],
         topicNames: [],
         originalArrayTopics: this.props.annualTopics,
-        annualTopics: this.props.annualTopics,
+        authorsTopicList: this.props.annualTopics,
         intervalYearsArray: [],
         positionXArray: [],
         topicSequence: [],
@@ -46,29 +46,26 @@ class TopicDiagram extends Component {
     this.calculateMinMaxDate(settings)
     this.calculateSpecsForXAxis(settings)
     this.getIntervalsForXAxis(settings)
-    this.createScale(settings, this.xAxis)
+    this.createXAxis(settings, this.xAxis)
 
 
-    this.addIntervalsToTopicList(settings)
-    this.deleteDuplicatesAnnualTopics(settings)
+    this.addIntervalsToAuthorsTopicList(settings)
+    this.deleteDuplicatesInAuthorsTopicList(settings)
     // Define Topics, Sequence, Colors and Y Values.
     this.defineTopicSequence(settings)
     this.addColorsForEachTopic(settings)
     this.addYValueForEachTopic(settings)
-    this.addTopicSequenceDataToAnnualTopics(settings)
-    this.addXValueToAnnualTopics(settings)
-    this.addRadiusToAnnualTopics(settings)
+    this.addTopicSequenceDataToAuthorsTopicList(settings)
+    this.addXValueToAuthorsTopicList(settings)
+    this.addRadiusToAuthorsTopicList(settings)
     this.getListOfTopicNames(this.props.topicData, settings)
     this.addYValueForTopicNames(this.props.topicData, settings)
     // settings.topicNameList = addYValueForTopicNames(this.props.topicData, settings)
     this.calculateHeightOfDiagram(settings)
-
     this.createCircles(settings, this.chart)
 
 };
 
-  // height and widht should adjust according to how many topics are included
-  // just calculate and multiply needed size by topics
   createCircles(settings, chart){
     var svgContainer = d3.select(chart).append("svg")
       .attr("width", 1000)
@@ -80,7 +77,7 @@ class TopicDiagram extends Component {
       .style("opacity", 0);
 
     var circles = svgContainer.selectAll("circle")
-                              .data(settings.annualTopics)
+                              .data(settings.authorsTopicList)
                               .enter()
                               .append("circle")
                               .on("mouseover", function(d) {
@@ -154,12 +151,12 @@ class TopicDiagram extends Component {
     }
   }
 
-  addIntervalsToTopicList(settings){
+  addIntervalsToAuthorsTopicList(settings){
     // change year of topic into interval of topic
     var annualTopicList = [];
-    for(var index in settings.annualTopics){
+    for(var index in settings.authorsTopicList){
       var intervalYear = 0;
-      var year = settings.annualTopics[index].year
+      var year = settings.authorsTopicList[index].year
       var i = 0;
       for(i in settings.intervalYearsArray){
         if(year == settings.intervalYearsArray[i]){
@@ -174,32 +171,32 @@ class TopicDiagram extends Component {
       }
       var topic = {};
       topic.interval = intervalYear;
-      topic.topic = settings.annualTopics[index].topic
+      topic.topic = settings.authorsTopicList[index].topic
       annualTopicList.push(topic)
     }
-    settings.annualTopics = annualTopicList;
+    settings.authorsTopicList = annualTopicList;
   }
 
-  deleteDuplicatesAnnualTopics(settings){
+  deleteDuplicatesInAuthorsTopicList(settings){
     // get uniqueAnnualTopicList - by reducing objects that contain the same values (same topic in the same interval)
-    var duplicateAnnualTopicListString = settings.annualTopics.map(object => JSON.stringify(object))
-    var uniqueAnnualTopicList = [];
-    new Set(duplicateAnnualTopicListString).forEach(string => uniqueAnnualTopicList.push(JSON.parse(string)))
-    uniqueAnnualTopicList.forEach((uniqueAnnualTopic) => {
+    var duplicateAnnualTopicListString = settings.authorsTopicList.map(object => JSON.stringify(object))
+    // var settings.authorsTopicList = [];
+    new Set(duplicateAnnualTopicListString).forEach(string => settings.authorsTopicList.push(JSON.parse(string)))
+    settings.authorsTopicList.forEach((uniqueAnnualTopic) => {
       uniqueAnnualTopic.count = 0
-      settings.annualTopics.forEach(function(duplicateAnnualTopic){
+      settings.authorsTopicList.forEach(function(duplicateAnnualTopic){
         if (uniqueAnnualTopic.interval == duplicateAnnualTopic.interval && uniqueAnnualTopic.topic == duplicateAnnualTopic.topic){
           uniqueAnnualTopic.count = uniqueAnnualTopic.count + 1
          }
       });
     });
-    settings.annualTopics = uniqueAnnualTopicList
+    // settings.authorsTopicList = settings.authorsTopicList
   }
 
   defineTopicSequence(settings){
     // to get an array in a sequence where the most important topic gets the highest y-Value
-    // looks in settings.annualTopics for a topic: if topic is available count topics
-    settings.annualTopics.forEach(function(topicInformation) {
+    // looks in settings.authorsTopicList for a topic: if topic is available count topics
+    settings.authorsTopicList.forEach(function(topicInformation) {
         var topicExistsInTopicSequence = false;
         settings.topicSequence.forEach(function(topicNewList){
           if(topicInformation.topic === topicNewList.topic){
@@ -245,14 +242,14 @@ class TopicDiagram extends Component {
     }
   }
 
-  addTopicSequenceDataToAnnualTopics(settings){
-      // add y Values and colors to each object in settings.annualTopics according to value of topic
+  addTopicSequenceDataToAuthorsTopicList(settings){
+      // add y Values and colors to each object in settings.authorsTopicList according to value of topic
     var index = 0;
-    settings.annualTopics.map((topicInformation) => {
-      for(index in settings.annualTopics){
+    settings.authorsTopicList.map((topicInformation) => {
+      for(index in settings.authorsTopicList){
         settings.topicSequence.forEach(function(topic){
-          if(settings.annualTopics[index].topic == topic.topic){
-            var topicInformation = settings.annualTopics[index]
+          if(settings.authorsTopicList[index].topic == topic.topic){
+            var topicInformation = settings.authorsTopicList[index]
             topicInformation.y = topic.y
             topicInformation.color = topic.color
             return topicInformation
@@ -263,33 +260,33 @@ class TopicDiagram extends Component {
   }
 
   // For each Object define X Value according to center of Interval
-  addXValueToAnnualTopics(settings){
-      for(var index in settings.annualTopics){
-      var intervalNumber = settings.annualTopics[index].interval-1;
-      settings.annualTopics[index].x = settings.positionXArray[intervalNumber]
+  addXValueToAuthorsTopicList(settings){
+      for(var index in settings.authorsTopicList){
+      var intervalNumber = settings.authorsTopicList[index].interval-1;
+      settings.authorsTopicList[index].x = settings.positionXArray[intervalNumber]
     }
   }
 
-  addRadiusToAnnualTopics(settings){
+  addRadiusToAuthorsTopicList(settings){
     var maxValue = 0;
-    for(var index in settings.annualTopics){
-      if(settings.annualTopics[index].count>maxValue){
-        maxValue = settings.annualTopics[index].count
+    for(var index in settings.authorsTopicList){
+      if(settings.authorsTopicList[index].count>maxValue){
+        maxValue = settings.authorsTopicList[index].count
       }
     }
     var minRadius = 5;
     var maxRadius = 40;
     var RadiusDif = 35/maxValue
-    for(var index in settings.annualTopics){
-      var radius = settings.annualTopics[index].count*RadiusDif+5
-      settings.annualTopics[index].r = radius
+    for(var index in settings.authorsTopicList){
+      var radius = settings.authorsTopicList[index].count*RadiusDif+5
+      settings.authorsTopicList[index].r = radius
     }
   }
 
   calculateHeightOfDiagram(settings){
-    for(var index in settings.annualTopics){
-      if(settings.diagramHeight<settings.annualTopics[index].y){
-        settings.diagramHeight = settings.annualTopics[index].y + 40
+    for(var index in settings.authorsTopicList){
+      if(settings.diagramHeight<settings.authorsTopicList[index].y){
+        settings.diagramHeight = settings.authorsTopicList[index].y + 40
       }
     }
   }
@@ -315,9 +312,9 @@ class TopicDiagram extends Component {
 
   addYValueForTopicNames(topicData, settings){
     for(var index in settings.topicNameList){
-      for(var indexFinalArray in settings.annualTopics){
-        if(settings.topicNameList[index].id == settings.annualTopics[indexFinalArray].topic){
-          settings.topicNameList[index].y = settings.annualTopics[indexFinalArray].y
+      for(var indexFinalArray in settings.authorsTopicList){
+        if(settings.topicNameList[index].id == settings.authorsTopicList[indexFinalArray].topic){
+          settings.topicNameList[index].y = settings.authorsTopicList[indexFinalArray].y
           break;
         }
       }
@@ -333,10 +330,10 @@ class TopicDiagram extends Component {
     });
     settings.minDate = settings.originalArrayTopics[0].year;
     settings.maxDate = settings.originalArrayTopics[settings.originalArrayTopics.length-1].year+1;
-    // settings.minMaxDate = [settings.annualTopics[0].year, settings.annualTopics[settings.annualTopics.length-1].year+1]
+    // settings.minMaxDate = [settings.authorsTopicList[0].year, settings.authorsTopicList[settings.authorsTopicList.length-1].year+1]
   }
 
-  createScale(settings, xAxis){
+  createXAxis(settings, xAxis){
     var svg = d3.select(xAxis).append("svg")
                         .attr("width", 1000)
                         .attr("height", 100);

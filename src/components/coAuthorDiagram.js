@@ -11,18 +11,21 @@ class CoAuthorDiagram extends Component {
      var coAuthorArray = this.props.coAuthorArray
      var searchedAuthor = this.props.searchedAuthor
 
+     // sort CoAuthorArray according to count of publications
      coAuthorArray.sort(function(a, b){
        return b.count - a.count
      });
 
+     // create Array for Author and List all of it`s CoAuthors
      var treeData = {"name": searchedAuthor, "count": 0};
      treeData["coAuthors"] = coAuthorArray
 
-      // Set the dimensions and margins of the diagram
-      var margin = {top: 20, right: 90, bottom: 30, left: 90},
+      // Set the dimensions and margins of the diagram / height according to number of CoAuthors
+      var margin = {top: 20, right: 90, bottom: 30, left: 110},
           width = 500,
           height = coAuthorArray.length*25;
 
+      // select svg and create new group element
       const node = this.svg
       var svg = d3.select(node)
           .attr("width", width)
@@ -30,7 +33,6 @@ class CoAuthorDiagram extends Component {
         .append("g")
           .attr("transform", "translate("
                 + margin.left + "," + margin.top + ")");
-
 
       var i = 0,
           duration = 750,
@@ -42,7 +44,7 @@ class CoAuthorDiagram extends Component {
       root = d3.hierarchy(treeData, function(d) {
         return d.coAuthors;
       });
-
+      // sets root node at top of diagram
       root.x0 = 0;
       root.y0 = 0;
 
@@ -65,7 +67,7 @@ class CoAuthorDiagram extends Component {
             })
 
 
-            // Enter any new nodes at the parent's previous position.
+        // Enter any new nodes at the parent's previous position.
         var nodeEnter = node.enter().append('g')
             .attr('class', 'node')
             .attr("transform", function(d) {
@@ -81,7 +83,7 @@ class CoAuthorDiagram extends Component {
         function isRootNode(nodeData){
           return nodeData.depth == 0
         }
-
+      // add text to nodes according if it is collapsible
         nodeEnter.append('text')
             .attr("dy", ".35em")
             .attr("x", function(d) {
@@ -120,10 +122,6 @@ class CoAuthorDiagram extends Component {
         var countArray = coAuthorArray.map(author => author.count);
         var max = d3.max(countArray);
         var radiusScale = d3.scaleLinear().range([1, multiplier]).domain([0, max])
-
-        // var div = d3.select('circle.node').append("div")
-        //   .attr("class", "tooltip")
-        //   .style("opacity", 1e-6);
 
         nodeUpdate.select('circle.node')
           .attr('r', function(d){

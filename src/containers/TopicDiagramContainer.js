@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import TopicDiagram from '../components/TopicDiagram'
 
 
+// get Topic Information and bring it into the right form to use it in TopicDiagram
 const mapStateToProps = state => {
   var data = state.general.publications;
   var topicData = state.topicsDiagram.topics;

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CoAuthorDiagram from '../components/CoAuthorDiagram'
 
-
+// get data from coAuthorARray and bring it into the right form to use for diagrams
 const mapStateToProps = state => {
   var coAuthorArray = [];
   var searchedAuthor = state.general.searchString;

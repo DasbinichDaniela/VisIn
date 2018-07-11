@@ -6,14 +6,14 @@ export const REQUEST_TOPICS = 'REQUEST_TOPICS'
 export const RECEIVE_TOPICS = 'RECEIVE_TOPICS'
 export const ERROR_TOPICS = 'ERROR_TOPICS'
 
+// define actions
+
 export const requestSearch = searchString => ({
   type: REQUEST_SEARCH,
   searchString
-  // searchString: searchString
 })
 
 export const receiveSearch = (searchString, json) => {
-  // debugger;
   return {
     type: RECEIVE_SEARCH,
     searchString,
@@ -31,6 +31,7 @@ export const errorSearch = searchString => ({
   searchString,
 })
 
+// load information of API about authors
 export const startSearch = (searchString) => {
   return (dispatch) => {
     dispatch(requestSearch(searchString))
@@ -65,6 +66,7 @@ export const errorTopics = () => ({
   type: ERROR_TOPICS,
 })
 
+// load information about topics from API
 export const startFetchTopics = () => {
   return (dispatch) => {
     dispatch(requestTopics())

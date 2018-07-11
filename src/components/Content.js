@@ -3,6 +3,8 @@ import CoAuthorDiagramContainer from '../containers/CoAuthorDiagramContainer'
 import TopicDiagramContainer from '../containers/TopicDiagramContainer'
 import './Content.css'
 
+
+// create different content pages according to state
 const Content = ({startScreen, publications, isLoading, errorConnection, noInformationFound, topics}) => (
   <div>
     {startScreen &&

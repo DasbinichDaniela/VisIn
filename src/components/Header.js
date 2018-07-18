@@ -6,6 +6,7 @@ import './Header.css'
 const Header = ({ dispatch }) => {
   var input;
 
+  // create header with Logo, input field and search bar
   return (
     <div className="header">
       <img id="VisIn_Logo" src={require("../assets/VisIn_Logo.png")} />

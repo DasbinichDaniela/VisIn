@@ -140,6 +140,7 @@ class TopicDiagram extends Component {
 
   addIntervalsToAuthorsTopicList(settings){
     // change year of topic in authorsTopicList into interval of topic
+    // to define intervals for radius calculation and position of each circle
     var annualTopicList = [];
     for(var index in settings.authorsTopicList){
       var intervalYear = 0;
@@ -170,6 +171,7 @@ class TopicDiagram extends Component {
     var duplicateAnnualTopicListString = settings.authorsTopicList.map(object => JSON.stringify(object))
     new Set(duplicateAnnualTopicListString).forEach(string => settings.authorsTopicList.push(JSON.parse(string)))
     settings.authorsTopicList.forEach((uniqueAnnualTopic) => {
+      // get count for each duplicate that will be reduced
       uniqueAnnualTopic.count = 0
       settings.authorsTopicList.forEach(function(duplicateAnnualTopic){
         if (uniqueAnnualTopic.interval == duplicateAnnualTopic.interval && uniqueAnnualTopic.topic == duplicateAnnualTopic.topic){
@@ -180,8 +182,9 @@ class TopicDiagram extends Component {
   }
 
   defineTopicSequence(settings){
-    // to get an array in a sequence where the most important topic gets the highest y-Value
-    // looks in settings.authorsTopicList for a topic: if topic is available count topics
+    // Topics shall be ordered top down - first topic shall be the one with most publications
+    // get array in sequence - to define y-Values for each topic
+    // searches in settings.authorsTopicList for a topic: if topic is available set count higher
     settings.authorsTopicList.forEach(function(topicInformation) {
         var topicExistsInTopicSequence = false;
         settings.topicListOrdered.forEach(function(topicNewList){
@@ -228,7 +231,8 @@ class TopicDiagram extends Component {
   }
 
   addTopicSequenceDataToAuthorsTopicList(settings){
-      // add y Values and colors to each object in settings.authorsTopicList according to value of topic
+      // add y Values and colors to each object in settings.authorsTopicList
+      // y and color will be defined according to value of topic
     var index = 0;
     settings.authorsTopicList.map((topicInformation) => {
       for(index in settings.authorsTopicList){
@@ -244,8 +248,8 @@ class TopicDiagram extends Component {
     });
   }
 
-  // For each Object define X Value according to center of Interval
   addXValueToAuthorsTopicList(settings){
+    // For each Object define X Value according to center of Interval
     for(var index in settings.authorsTopicList){
       var intervalNumber = settings.authorsTopicList[index].interval-1;
       settings.authorsTopicList[index].x = settings.positionXArray[intervalNumber]
@@ -253,7 +257,8 @@ class TopicDiagram extends Component {
   }
 
   addRadiusToAuthorsTopicList(settings){
-    // get radius according - according to normalization
+    // define radius for each topic
+    // for better overview normalize radius according to count of publications
     var maxValue = 0;
     for(var index in settings.authorsTopicList){
       if(settings.authorsTopicList[index].count>maxValue){
@@ -310,11 +315,15 @@ class TopicDiagram extends Component {
   }
 
   calculateMinMaxDate(settings){
-    // calculate min and max Date for time scale
+    // define min max date according to year of oldest and latest publication
     settings.originalArrayTopics.sort(function(a,b){
       return a.year - b.year
     });
     settings.minDate = settings.originalArrayTopics[0].year;
+    // maxDate - one year has to be added to include last publication in interval before
+    // example: last Publication is in 2018. Scale would be shown until 2018.
+    //But circles are shown in the center of each interval.
+    // The interval before would last until 31.12.2017 - therefore publications in 2018 will not be included.
     settings.maxDate = settings.originalArrayTopics[settings.originalArrayTopics.length-1].year+1;
   }
 
@@ -324,10 +333,12 @@ class TopicDiagram extends Component {
                         .attr("width", 1000)
                         .attr("height", 100);
 
+    // set timeframe and position of xAxis
     var axisScale = d3.scaleTime()
           .domain([new Date(settings.minDate, 0, 1), new Date(settings.maxDate, 0, 1)])
           .range([100, 800]);
 
+    // set format of xAxis
     var xAxis = d3.axisBottom()
       .scale(axisScale)
       .ticks(settings.numberOfTicks)
@@ -342,9 +353,10 @@ class TopicDiagram extends Component {
 
     calculateSpecsForXAxis(settings){
       // Define aggregation of Years to create Intervals
+      // Intervals shall be defined useful - in 2, 5, 10, 20, 50, 100 years Intervals
       var difTime = settings.maxDate-settings.minDate+1
       var aggregationNumber = 1
-      if((difTime)<1){
+      if((difTime)<7){
         settings.numberOfTicks = difTime
         settings.intervalCount = 1;
       }

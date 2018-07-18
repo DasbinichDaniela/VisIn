@@ -11,6 +11,8 @@ class CoAuthorDiagram extends Component {
      var coAuthorArray = this.props.coAuthorArray
      var searchedAuthor = this.props.searchedAuthor
 
+     // code from: https://bl.ocks.org/d3noob/43a860bc0024792f8803bba8ca0d5ecd and adjusted
+     
      // sort CoAuthorArray according to count of publications
      coAuthorArray.sort(function(a, b){
        return b.count - a.count
@@ -25,7 +27,7 @@ class CoAuthorDiagram extends Component {
           width = 500,
           height = coAuthorArray.length*25;
 
-      // select svg and create new group element
+      // select svg and create new group elements
       const node = this.svg
       var svg = d3.select(node)
           .attr("width", width)
@@ -80,6 +82,7 @@ class CoAuthorDiagram extends Component {
             .attr('class', 'node')
             .attr('r', 20)
 
+        // details for Root Node
         function isRootNode(nodeData){
           return nodeData.depth == 0
         }
@@ -116,8 +119,8 @@ class CoAuthorDiagram extends Component {
            });
 
         // Update the node attributes and style
-        // Adjust size of Bubbles according to Count of Publications
-
+        // Adjust size of Bubbles according to Count of Publications -
+        // get highext count to set max value for bubble size
         var multiplier = 10;
         var countArray = coAuthorArray.map(author => author.count);
         var max = d3.max(countArray);
@@ -130,7 +133,7 @@ class CoAuthorDiagram extends Component {
           })
 
         // ****************** links section ***************************
-        // Update the links...
+        // draw links between bubbles by defining position of parent node until children node
         var link = svg.selectAll('path.link')
             .data(links, function(d) { return d.id; });
         // Enter any new links at the parent's previous position.

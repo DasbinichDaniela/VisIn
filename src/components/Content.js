@@ -4,7 +4,7 @@ import TopicDiagramContainer from '../containers/TopicDiagramContainer'
 import './Content.css'
 
 
-// create different content pages according to state
+// show differen content pages according to actual state
 const Content = ({startScreen, publications, isLoading, errorConnection, noInformationFound, topics}) => (
   <div>
     {startScreen &&

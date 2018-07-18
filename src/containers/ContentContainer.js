@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Content from '../components/Content'
 
-
 const mapStateToProps = state => {
   let publications;
   if(state.general && state.general.publications){
